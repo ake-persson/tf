@@ -1,6 +1,6 @@
 # tf - Template File
 
-Template files in Bash using YAML input and GO HTML templating.
+Template files in Bash using YAML input and GO text template (http://golang.org/pkg/text/template/).
 
 # Usage
 
