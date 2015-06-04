@@ -4,7 +4,6 @@ import (
     "os"
     "fmt"
     "log"
-//    "bufio"
 //    "path/filepath"
     "io/ioutil"
     flags "github.com/jessevdk/go-flags"
@@ -27,12 +26,12 @@ func main() {
 
     // Options
     var opts struct {
-        Debug bool `short:"d" long:"debug" description:"Debug"`
+        Verbose bool `short:"v" long:"verbose" description:"Verbose"`
         Input string `short:"i" long:"input" description:"YAML input"`
-        InpFile string `short:"I" long:"input-file" description:"YAML input file" default:"default.yaml"`
+        InpFile string `short:"f" long:"input-file" description:"YAML input file" default:"default.yaml"`
         TemplFile string `short:"t" long:"template-file" description:"Template file"`
         OutpFile string `short:"o" long:"output-file" description:"Output file, will use stdout per default"`
-//        TemplDir string `short:"T" long:"template-dir" description:"Template files with ext. \".tf\" in directory"`
+//        TemplDir string `short:"d" long:"template-dir" description:"Template files with ext. \".tf\" in directory"`
     }
 
     // Parse options
@@ -45,7 +44,7 @@ func main() {
     var input []byte
     if opts.Input != "" {
         if opts.InpFile != "default.yaml" {
-            l.Printf("Can't specify both --input (-i) and --input-file (-I)\n")
+            l.Printf("Can't specify both --input (-i) and --input-file (-f)\n")
             os.Exit(1)
         }
         input = []byte(opts.Input)
@@ -70,7 +69,7 @@ func main() {
     // Template file
     if opts.TemplFile != "" {
         if opts.TemplDir != "" {
-            l.Printf("Can't specify both --template-file (-t) and --template-dir (-T)\n")
+            l.Printf("Can't specify both --template-file (-t) and --template-dir (-d)\n")
             os.Exit(1)
         }
 
