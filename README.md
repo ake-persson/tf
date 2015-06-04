@@ -9,12 +9,12 @@ Usage:
   tf [OPTIONS]
 
 Application Options:
-  -d, --debug          Debug
-  -y, --input=         YAML input
-  -i, --input-file=    YAML input file (default.yaml)
-  -f, --template-file= Template file
-  -o, --output-file=   Output file
-  -t, --template-dir=  Template files with ext. ".tf" in directory
+  -v, --verbose        Verbose
+  -i, --input=         YAML input
+  -f, --input-file=    YAML input file (default.yaml)
+  -t, --template-file= Template file
+  -o, --output-file=   Output file, will use stdout per default
+  -d, --template-dir=  Template files with ext. ".tf" in directory
 
 Help Options:
   -h, --help           Show this help message

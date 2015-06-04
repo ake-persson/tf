@@ -31,7 +31,7 @@ func main() {
         InpFile string `short:"f" long:"input-file" description:"YAML input file" default:"default.yaml"`
         TemplFile string `short:"t" long:"template-file" description:"Template file"`
         OutpFile string `short:"o" long:"output-file" description:"Output file, will use stdout per default"`
-//        TemplDir string `short:"d" long:"template-dir" description:"Template files with ext. \".tf\" in directory"`
+        TemplDir string `short:"d" long:"template-dir" description:"Template files with ext. \".tf\" in directory"`
     }
 
     // Parse options
