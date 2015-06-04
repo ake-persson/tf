@@ -1,5 +1,3 @@
-# +++ In Development +++
-
 # tf - Template File
 
 Template files in Bash using YAML input and GO HTML templating.
