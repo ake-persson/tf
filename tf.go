@@ -4,7 +4,6 @@ import (
     "os"
     "fmt"
     "log"
-//    "path/filepath"
     "io/ioutil"
     flags "github.com/jessevdk/go-flags"
     "gopkg.in/yaml.v2"
@@ -18,8 +17,6 @@ func check(e error) {
     }
 }
 
-// Accept template from stdin
-
 func main() {
     // Initialize log
     l := log.New(os.Stderr, "", 0)
@@ -28,10 +25,9 @@ func main() {
     var opts struct {
         Verbose bool `short:"v" long:"verbose" description:"Verbose"`
         Input string `short:"i" long:"input" description:"YAML input"`
-        InpFile string `short:"f" long:"input-file" description:"YAML input file" default:"default.yaml"`
+        InpFile string `short:"f" long:"input-file" description:"YAML input file"`
         TemplFile string `short:"t" long:"template-file" description:"Template file"`
         OutpFile string `short:"o" long:"output-file" description:"Output file, will use stdout per default"`
-        TemplDir string `short:"d" long:"template-dir" description:"Template files with ext. \".tf\" in directory"`
     }
 
     // Parse options
@@ -43,12 +39,12 @@ func main() {
     // Get YAML input
     var input []byte
     if opts.Input != "" {
-        if opts.InpFile != "default.yaml" {
+        if opts.InpFile != "" {
             l.Printf("Can't specify both --input (-i) and --input-file (-f)\n")
             os.Exit(1)
         }
         input = []byte(opts.Input)
-    } else {
+    } else if opts.InpFile != "" {
         if _, err := os.Stat(opts.InpFile); os.IsNotExist(err) {
             l.Printf("File doesn't exist: %v\n", opts.InpFile)
             os.Exit(1)
@@ -56,6 +52,9 @@ func main() {
         c, err := ioutil.ReadFile(opts.InpFile)
         input = c
         check(err)
+    } else {
+        l.Printf("You need to specify either --input (-i) or --input-file (-f)\n")
+        os.Exit(1)
     }
 
     // Decode YAML 
@@ -63,16 +62,11 @@ func main() {
     err = yaml.Unmarshal(input, &y)
     check(err)
 
-    s, err := yaml.Marshal(&y)
-    fmt.Printf("%s\n", string(s))
+//    s, err := yaml.Marshal(&y)
+//    fmt.Printf("%s\n", string(s))
 
     // Template file
     if opts.TemplFile != "" {
-        if opts.TemplDir != "" {
-            l.Printf("Can't specify both --template-file (-t) and --template-dir (-d)\n")
-            os.Exit(1)
-        }
-
         if _, err := os.Stat(opts.TemplFile); os.IsNotExist(err) {
             l.Printf("File doesn't exist: %v\n", opts.TemplFile)
             os.Exit(1)
