@@ -26,3 +26,11 @@ Help Options:
 ./tf -f example.yaml -t example.conf.tf -o example.conf
 ./tf -i '{region: amer, country: us}' -t example.conf.tf
 ```
+
+# Build
+
+```bash
+go get github.com/mickep76/tf
+go install github.com/mickep76/tf
+$GOPATH/bin/tf
+```
