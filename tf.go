@@ -61,6 +61,9 @@ func main() {
     err = yaml.Unmarshal(input, &y)
     check(err)
 
+    s, err := yaml.Marshal(&y)
+    fmt.Printf("%s\n", string(s))
+
     // Template file
     if opts.TemplFile != "" {
         if opts.TemplDir != "" {
@@ -82,10 +85,9 @@ func main() {
         check(err)
 
         buf := new(bytes.Buffer)
-        err = t.Execute(buf, input) 
+        err = t.Execute(buf, y)
         check(err)
 
-        fmt.Printf("%v\n", input)
         fmt.Printf("%v\n", buf)
     }
 }
