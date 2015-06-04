@@ -24,5 +24,5 @@ Help Options:
 
 ```bash
 ./tf -f example.yaml -t example.conf.tf -o example.conf
-./tf -i '{region: amer, country: us}' -t example.tf
+./tf -i '{region: amer, country: us}' -t example.conf.tf
 ```
