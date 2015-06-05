@@ -35,6 +35,13 @@ go install github.com/mickep76/tf
 $GOPATH/bin/tf
 ```
 
+# Install using Homebrew
+
+```bash
+brew tap mickep76/funk-gnarge
+brew install mickep76/funk-gnarge/tf
+```
+
 # Template a directory structure
 
 ## Template
