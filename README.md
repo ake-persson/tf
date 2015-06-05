@@ -1,6 +1,6 @@
 # tf - Template File
 
-Template files in Bash using YAML input and GO text template (http://golang.org/pkg/text/template/).
+Template file in Bash using YAML input and GO text template (http://golang.org/pkg/text/template/).
 
 # Usage
 
@@ -11,10 +11,9 @@ Usage:
 Application Options:
   -v, --verbose        Verbose
   -i, --input=         YAML input
-  -f, --input-file=    YAML input file (default.yaml)
+  -f, --input-file=    YAML input file
   -t, --template-file= Template file
   -o, --output-file=   Output file, will use stdout per default
-  -d, --template-dir=  Template files with ext. ".tf" in directory
 
 Help Options:
   -h, --help           Show this help message
@@ -25,7 +24,7 @@ Help Options:
 ```bash
 ./tf -f examples/example.yaml -t examples/example.conf.tf -o example.conf
 ./tf -i '{region: amer, country: us}' -t examples/example.conf.tf
-./tf -i '{Apples: [a1,a2,a3]}' -t examples/apple.tf
+./tf -i '{Apples: [1,2,3]}' -t examples/apple.tf
 ```
 
 # Build
@@ -47,7 +46,7 @@ for file in $(find . -name '*.tf'); do
 done
 ```
 
-## Cleanup:
+## Cleanup
 
 ```bash
 for file in $(find . -name '*.tf'); do
