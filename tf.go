@@ -4,6 +4,7 @@ import (
     "os"
     "fmt"
     "log"
+    "strings"
     "io/ioutil"
     flags "github.com/jessevdk/go-flags"
     "gopkg.in/yaml.v2"
@@ -15,6 +16,17 @@ func check(e error) {
     if e != nil {
         panic(e)
     }
+}
+
+var fns = template.FuncMap{
+    "join": func(a []interface{}, sep string) string {
+        s := make([]string, len(a))
+        for i, v := range a {
+            s[i] = v.(string)
+        }
+
+        return strings.Join(s, sep)
+    },
 }
 
 func main() {
@@ -77,8 +89,9 @@ func main() {
         check(err)
 
         // Parse template
-        t, err := template.New("template").Parse(string(c))
-        check(err)
+        t := template.Must(template.New("template").Funcs(fns).Parse(string(c)))
+//        t, err := template.New("template").Funcs(fns).Parse(string(c))
+//        check(err)
 
         buf := new(bytes.Buffer)
         err = t.Execute(buf, y)

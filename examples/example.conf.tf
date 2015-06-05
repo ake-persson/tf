@@ -4,6 +4,8 @@
 region = {{.region}}
 country = {{.country}}
 
+{{range .list}}{{.}},{{end}}
+
 {{if eq .region "amer"}}
 [amer]
 city = New York

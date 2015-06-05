@@ -23,8 +23,9 @@ Help Options:
 # Examples
 
 ```bash
-./tf -f example.yaml -t example.conf.tf -o example.conf
-./tf -i '{region: amer, country: us}' -t example.conf.tf
+./tf -f examples/example.yaml -t examples/example.conf.tf -o example.conf
+./tf -i '{region: amer, country: us}' -t examples/example.conf.tf
+./tf -i '{Apples: [a1,a2,a3]}' -t examples/apple.tf
 ```
 
 # Build
@@ -33,4 +34,23 @@ Help Options:
 go get github.com/mickep76/tf
 go install github.com/mickep76/tf
 $GOPATH/bin/tf
+```
+
+# Template a directory structure
+
+## Template
+
+```bash
+input='input.yaml'
+for file in $(find . -name '*.tf'); do
+    tf -i ${input} -t ${file} -o ${file%%.tf}
+done
+```
+
+## Cleanup:
+
+```bash
+for file in $(find . -name '*.tf'); do
+    rm -f ${file%%.tf}
+done
 ```
