@@ -1,13 +1,11 @@
 #!/bin/bash
 
-set -eu
-set -x
+set -eux
 
-TMPDIR="$(pwd)/.gobuild"
-export GOPATH=${TMPDIR}
+export GOPATH="$(pwd)/.gobuild"
 SRCDIR="${GOPATH}/src/github.com/mickep76/tf"
 
-[ -d ${TMPDIR} ] && rm -rf ${TMPDIR}
+[ -d ${GOPATH} ] && rm -rf ${GOPATH}
 mkdir -p ${GOPATH}/{src,pkg,bin}
 mkdir -p ${SRCDIR}
 cp tf.go ${SRCDIR}
