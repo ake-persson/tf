@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "strings"
+    "reflect"
     "io/ioutil"
     flags "github.com/jessevdk/go-flags"
     "gopkg.in/yaml.v2"
@@ -19,6 +20,9 @@ func check(e error) {
 }
 
 var fns = template.FuncMap{
+    "last": func(x int, a interface{}) bool {
+        return x == reflect.ValueOf(a).Len() - 1
+    },
     "join": func(a []interface{}, sep string) string {
         s := make([]string, len(a))
         for i, v := range a {
