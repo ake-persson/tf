@@ -24,7 +24,7 @@ Help Options:
 ```bash
 ./tf -f examples/example.yaml -t examples/example.conf.tf -o example.conf
 ./tf -i '{region: amer, country: us}' -t examples/example.conf.tf
-./tf -i '{Apples: [1,2,3]}' -t examples/apple.tf
+./tf -i '{Apples: [1,2,3]}' -t examples/apples.tf
 ```
 
 # Build

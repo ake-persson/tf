@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "strings"
+    "strconv"
     "reflect"
     "io/ioutil"
     flags "github.com/jessevdk/go-flags"
@@ -26,7 +27,12 @@ var fns = template.FuncMap{
     "join": func(a []interface{}, sep string) string {
         s := make([]string, len(a))
         for i, v := range a {
-            s[i] = v.(string)
+            switch v.(type) {
+                case string:
+                    s[i] = v.(string)
+                case int, int32, int64:
+                    s[i] = strconv.Itoa(v.(int))
+            }
         }
 
         return strings.Join(s, sep)
