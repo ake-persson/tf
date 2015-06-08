@@ -61,7 +61,8 @@ func main() {
         Input string `short:"i" long:"input" description:"YAML input"`
         InpFile string `short:"f" long:"input-file" description:"YAML input file"`
         TemplFile string `short:"t" long:"template-file" description:"Template file"`
-        OutpFile string `short:"o" long:"output-file" description:"Output file, will use stdout per default"`
+        OutpFile string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
+        Permission int32 `short:"p" long:"permission" description:"Permission for output file" default:"644"`
     }
 
     // Parse options
@@ -135,7 +136,7 @@ func main() {
 
     // Write result
     if opts.OutpFile != "" {
-        err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), 0644)
+        err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), os.FileMode(opts.Permission))
         check(err)
     } else {
         fmt.Printf("%v\n", buf)
