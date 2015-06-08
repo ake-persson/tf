@@ -27,6 +27,7 @@ Help Options:
 ./tf -i '{region: amer, country: us}' -t examples/example.conf.tf
 ./tf -i '{Apples: [1,2,3]}' -t examples/apples.tf
 echo 'PATH: {{.Env.PATH}}:{{.Path}}' | ./tf -i '{Path: /usr/local/bin}'
+echo '{{range $i, $e := .Etcd}}{{$i}}{{printf "\n"}}{{end}}'|./tf --etcd-node etcd1 --etcd-port 5001 --etcd-key /host
 ```
 
 # Build

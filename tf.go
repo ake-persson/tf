@@ -21,24 +21,13 @@ func check(e error) {
     }
 }
 
-func map_print(y map[string]interface{}, dir string, pad string) {
-    for key, val := range y {
-        if reflect.ValueOf(val).Kind() == reflect.Map {
-            fmt.Printf("%v[%v]\n", pad, key)
-            map_print(val.(map[string]interface{}), dir + "/" + key, pad + "    ")
-        } else {
-            fmt.Printf("%v%v: %v (%v)\n", pad, key, val, dir)
-        }
-    }
-}
-
-func node_tree(node *etcd.Node, rootKey string, vars map[string]interface{}) error {
+func node_tree(node *etcd.Node, vars map[string]interface{}) error {
     for _, node := range node.Nodes {
         keys := strings.Split(node.Key, "/")
         key := keys[len(keys) - 1]
         if node.Dir {
             vars[key] = make(map[string]interface{})
-            node_tree(node, fmt.Sprintf("%s/%s", rootKey, key), vars[key].(map[string]interface{}))
+            node_tree(node, vars[key].(map[string]interface{}))
         } else {
             vars[key] = node.Value
         }
@@ -132,7 +121,7 @@ func main() {
         node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
         client := etcd.NewClient(node)
         res, _ := client.Get(opts.EtcdKey, true, true)
-        err = node_tree(res.Node, opts.EtcdKey, vars)
+        err = node_tree(res.Node, vars)
         y["Etcd"] = vars
     }
 
