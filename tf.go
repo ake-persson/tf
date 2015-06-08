@@ -13,7 +13,10 @@ import (
     "text/template"
     "bytes"
     etcd "github.com/coreos/go-etcd/etcd"
+//    "github.com/olekukonko/tablewriter"
 )
+
+// Convert all interface{} to string
 
 func check(e error) {
     if e != nil {
@@ -52,6 +55,16 @@ var fns = template.FuncMap{
 
         return strings.Join(s, sep)
     },
+    "split": func(a string, sep string) []interface{} {
+        lst := strings.Split(a, sep)
+        nlst := make([]interface{}, len(lst))
+        for i, v := range lst {
+            nlst[i] = v
+        }
+        return nlst
+    },
+//    "table": func(a []interface{}) string {
+//    }
 }
 
 func main() {
