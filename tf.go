@@ -84,6 +84,12 @@ func main() {
     err = yaml.Unmarshal(input, &y)
     check(err)
 
+    // Add environment variables
+    for _, e := range os.Environ() {
+        p := strings.Split(e, "=")
+        y[p[0]] = p[1]
+    }
+
 //    s, err := yaml.Marshal(&y)
 //    fmt.Printf("%s\n", string(s))
 
