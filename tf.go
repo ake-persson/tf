@@ -12,12 +12,38 @@ import (
     "gopkg.in/yaml.v2"
     "text/template"
     "bytes"
+    etcd "github.com/coreos/go-etcd/etcd"
 )
 
 func check(e error) {
     if e != nil {
         panic(e)
     }
+}
+
+func map_print(y map[string]interface{}, dir string, pad string) {
+    for key, val := range y {
+        if reflect.ValueOf(val).Kind() == reflect.Map {
+            fmt.Printf("%v[%v]\n", pad, key)
+            map_print(val.(map[string]interface{}), dir + "/" + key, pad + "    ")
+        } else {
+            fmt.Printf("%v%v: %v (%v)\n", pad, key, val, dir)
+        }
+    }
+}
+
+func node_tree(node *etcd.Node, rootKey string, vars map[string]interface{}) error {
+    for _, node := range node.Nodes {
+        keys := strings.Split(node.Key, "/")
+        key := keys[len(keys) - 1]
+        if node.Dir {
+            vars[key] = make(map[string]interface{})
+            node_tree(node, fmt.Sprintf("%s/%s", rootKey, key), vars[key].(map[string]interface{}))
+        } else {
+            vars[key] = node.Value
+        }
+    }
+    return nil
 }
 
 var fns = template.FuncMap{
@@ -43,17 +69,8 @@ func main() {
     // get the FileInfo struct describing the standard input.
     fi, _ := os.Stdin.Stat()
 
-/*
-    var templ string
-    if (fi.Mode() & os.ModeCharDevice) == 0 {
-        bytes, _ := ioutil.ReadAll(os.Stdin)
-        templ = string(bytes)
-        fmt.Printf("%v\n", string(bytes))
-    }
-*/
-
     // Initialize log
-    l := log.New(os.Stderr, "", 0)
+    log := log.New(os.Stderr, "", 0)
 
     // Options
     var opts struct {
@@ -62,7 +79,10 @@ func main() {
         InpFile string `short:"f" long:"input-file" description:"YAML input file"`
         TemplFile string `short:"t" long:"template-file" description:"Template file"`
         OutpFile string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
-        Permission int32 `short:"p" long:"permission" description:"Permission for output file" default:"644"`
+        Permission int `short:"p" long:"permission" description:"Permission for output file" default:"644"`
+        EtcdNode string `short:"n" long:"etcd-node" description:"Etcd Node"`
+        EtcdPort int `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
+        EtcdKey string `short:"k" long:"etcd-key" description:"Etcd Key" default:"/"`
     }
 
     // Parse options
@@ -75,13 +95,13 @@ func main() {
     var input []byte
     if opts.Input != "" {
         if opts.InpFile != "" {
-            l.Printf("Can't specify both --input (-i) and --input-file (-f)\n")
+            log.Printf("Can't specify both --input (-i) and --input-file (-f)\n")
             os.Exit(1)
         }
         input = []byte(opts.Input)
     } else if opts.InpFile != "" {
         if _, err := os.Stat(opts.InpFile); os.IsNotExist(err) {
-            l.Printf("File doesn't exist: %v\n", opts.InpFile)
+            log.Printf("File doesn't exist: %v\n", opts.InpFile)
             os.Exit(1)
         }
         c, err := ioutil.ReadFile(opts.InpFile)
@@ -107,6 +127,18 @@ func main() {
 //    s, err := yaml.Marshal(&y)
 //    fmt.Printf("%s\n", string(s))
 
+    vars := make(map[string]interface{})
+    if opts.EtcdNode != "" {
+        node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
+        client := etcd.NewClient(node)
+        res, _ := client.Get(opts.EtcdKey, true, true)
+        err = node_tree(res.Node, opts.EtcdKey, vars)
+        y["Etcd"] = vars
+    }
+
+//    s, err := yaml.Marshal(&y)
+//    fmt.Printf("%s\n", string(s))
+
     // Template input
     var templ string
     if (fi.Mode() & os.ModeCharDevice) == 0 {
@@ -114,7 +146,7 @@ func main() {
         templ = string(bytes)
     } else if opts.TemplFile != "" {
         if _, err := os.Stat(opts.TemplFile); os.IsNotExist(err) {
-            l.Printf("File doesn't exist: %v\n", opts.TemplFile)
+            log.Printf("File doesn't exist: %v\n", opts.TemplFile)
             os.Exit(1)
         }
 
@@ -123,7 +155,7 @@ func main() {
         check(err)
         templ = string(c)
     } else {
-        l.Printf("No template specified using --template-file (-t) or piped to STDIN\n")
+        log.Printf("No template specified using --template-file (-t) or piped to STDIN\n")
         os.Exit(1)
     }
 
