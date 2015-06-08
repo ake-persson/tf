@@ -1,2 +1,2 @@
-{{.PATH}}
-{{.HOME}}
+{{.Env.PATH}}
+{{.Env.HOME}}
