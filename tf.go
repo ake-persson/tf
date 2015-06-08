@@ -40,6 +40,18 @@ var fns = template.FuncMap{
 }
 
 func main() {
+    // get the FileInfo struct describing the standard input.
+    fi, _ := os.Stdin.Stat()
+
+/*
+    var templ string
+    if (fi.Mode() & os.ModeCharDevice) == 0 {
+        bytes, _ := ioutil.ReadAll(os.Stdin)
+        templ = string(bytes)
+        fmt.Printf("%v\n", string(bytes))
+    }
+*/
+
     // Initialize log
     l := log.New(os.Stderr, "", 0)
 
@@ -75,8 +87,7 @@ func main() {
         input = c
         check(err)
     } else {
-        l.Printf("You need to specify either --input (-i) or --input-file (-f)\n")
-        os.Exit(1)
+        input = []byte("{}")
     }
 
     // Decode YAML 
@@ -95,8 +106,12 @@ func main() {
 //    s, err := yaml.Marshal(&y)
 //    fmt.Printf("%s\n", string(s))
 
-    // Template file
-    if opts.TemplFile != "" {
+    // Template input
+    var templ string
+    if (fi.Mode() & os.ModeCharDevice) == 0 {
+        bytes, _ := ioutil.ReadAll(os.Stdin)
+        templ = string(bytes)
+    } else if opts.TemplFile != "" {
         if _, err := os.Stat(opts.TemplFile); os.IsNotExist(err) {
             l.Printf("File doesn't exist: %v\n", opts.TemplFile)
             os.Exit(1)
@@ -105,22 +120,24 @@ func main() {
         // Open file
         c, err := ioutil.ReadFile(opts.TemplFile)
         check(err)
+        templ = string(c)
+    } else {
+        l.Printf("No template specified using --template-file (-t) or piped to STDIN\n")
+        os.Exit(1)
+    }
 
-        // Parse template
-        t := template.Must(template.New("template").Funcs(fns).Parse(string(c)))
-//        t, err := template.New("template").Funcs(fns).Parse(string(c))
-//        check(err)
+    // Parse template
+    t := template.Must(template.New("template").Funcs(fns).Parse(templ))
 
-        buf := new(bytes.Buffer)
-        err = t.Execute(buf, y)
+    buf := new(bytes.Buffer)
+    err = t.Execute(buf, y)
+    check(err)
+
+    // Write result
+    if opts.OutpFile != "" {
+        err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), 0644)
         check(err)
-
-        // Write result
-        if opts.OutpFile != "" {
-            err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), 0644)
-            check(err)
-        } else {
-            fmt.Printf("%v\n", buf)
-        }
+    } else {
+        fmt.Printf("%v\n", buf)
     }
 }
