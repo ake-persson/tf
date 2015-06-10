@@ -43,3 +43,33 @@ func strSplit(sep string, inp string) []interface{} {
 func strRepeat(rep int, inp string) string {
         return strings.Repeat(inp, rep)
 }
+
+// Get keys from interface{}
+func intfKeys(input interface{}) (interface{}, error) {
+    if input == nil {
+        return nil, nil
+    }
+
+    val := reflect.ValueOf(input)
+    if val.Kind() != reflect.Map {
+        return nil, fmt.Errorf("Cannot call keys on a non-map value: %v", input)
+    }
+
+    vk := val.MapKeys()
+    k := make([]interface{}, val.Len())
+    for i, _ := range k {
+        k[i] = vk[i].Interface()
+    }
+
+    return k, nil
+}
+
+// Get type (usefull for debugging templates)
+func intfType(inp interface{}) string {
+    return fmt.Sprintf("%v", reflect.TypeOf(inp))
+}
+
+// Test if type is printable
+func intfIsMap(inp interface{}) bool {
+    return reflect.TypeOf(inp).Kind() == reflect.Map
+}

@@ -24,6 +24,9 @@ var fns = template.FuncMap{
     "join": arrJoin,
     "split": strSplit,
     "repeat": strRepeat,
+    "keys": intfKeys,
+    "type": intfType,
+    "ismap": intfIsMap,
 }
 
 func main() {
