@@ -48,38 +48,34 @@ func main() {
 
     // Parse options
     _, err := flags.Parse(&opts)
-    if err != nil {
-        os.Exit(1)
-    }
+    check(err)
 
     // Get YAML input
-    var input []byte
+    var inp []byte
     if opts.Input != "" {
         if opts.InpFile != "" {
-            log.Printf("Can't specify both --input (-i) and --input-file (-f)\n")
+            log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
             os.Exit(1)
         }
-        input = []byte(opts.Input)
+        inp = []byte(opts.Input)
     } else if opts.InpFile != "" {
         if _, err := os.Stat(opts.InpFile); os.IsNotExist(err) {
             log.Printf("File doesn't exist: %v\n", opts.InpFile)
             os.Exit(1)
         }
-        c, err := ioutil.ReadFile(opts.InpFile)
-        input = c
+        content, err := ioutil.ReadFile(opts.InpFile)
         check(err)
+        inp = content
     } else {
-        input = []byte("{}")
+        inp = []byte("{}")
     }
 
     // Decode YAML 
     var y map[string]interface{}
-    err = yaml.Unmarshal(input, &y)
+    err = yaml.Unmarshal(inp, &y)
     check(err)
 
-//    s, err := yaml.Marshal(&y)
-//    fmt.Printf("%s\n", string(s))
-
+    // Get environment
     env := make(map[string]string)
     for _, e := range os.Environ() {
         v := strings.Split(e, "=")

@@ -30,16 +30,16 @@ func arrLast(i int, inp interface{}) bool {
 }
 
 // Join elements in an array to a string
-func arrJoin(inp []interface{}, sep string) string {
+func arrJoin(sep string, inp []interface{}) string {
     return strings.Join(arrIntfToStr(inp), sep)
 }
 
 // Split string into an array
-func strSplit(inp string, sep string) []interface{} {
+func strSplit(sep string, inp string) []interface{} {
     return arrStrToIntf(strings.Split(inp, sep))
 }
 
 // Repeat string x number of times
-func strRepeat(inp string, rep int) string {
+func strRepeat(rep int, inp string) string {
         return strings.Repeat(inp, rep)
 }
