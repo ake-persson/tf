@@ -92,6 +92,9 @@ func main() {
     err = yaml.Unmarshal(input, &y)
     check(err)
 
+//    s, err := yaml.Marshal(&y)
+//    fmt.Printf("%s\n", string(s))
+
     env := make(map[string]string)
     for _, e := range os.Environ() {
         v := strings.Split(e, "=")

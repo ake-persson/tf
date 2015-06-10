@@ -1,29 +1,16 @@
 package main
 
 import (
+    "fmt"
     "strings"
-    "strconv"
     "reflect"
 )
-
-// Convert interface{} to string
-func intfToStr(inp interface{}) string {
-    switch inp.(type) {
-        case string:
-            return inp.(string)
-        case int, int32, int64:
-            return strconv.Itoa(inp.(int))
-    }
-
-    // Generate some error
-    return ""
-}
 
 // Convert []interface{} to []string{}
 func arrIntfToStr(inp []interface{}) []string {
     outp := make([]string, len(inp))
     for i, val := range inp {
-        outp[i] = intfToStr(val)
+        outp[i] = fmt.Sprintf("%v", val)
     }
     return outp
 }
@@ -53,6 +40,6 @@ func strSplit(inp string, sep string) []interface{} {
 }
 
 // Repeat string x number of times
-func strRepeat(a string, x int) string {
-        return strings.Repeat(a, x)
+func strRepeat(inp string, rep int) string {
+        return strings.Repeat(inp, rep)
 }
