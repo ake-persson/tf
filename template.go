@@ -24,7 +24,7 @@ func arrStrToIntf(inp []string) []interface{} {
     return outp
 }
 
-// Compare index with slice length to determine if it's the last element
+// Determine if index is the last element in the array
 func arrLast(i int, inp interface{}) bool {
     return i == reflect.ValueOf(inp).Len() - 1
 }

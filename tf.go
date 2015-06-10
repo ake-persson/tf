@@ -19,21 +19,6 @@ func check(e error) {
     }
 }
 
-// Return Etcd structure as nested map[interface{}]interface{}
-func etcdNestedMap(node *etcd.Node, vars map[interface{}]interface{}) error {
-    for _, node := range node.Nodes {
-        keys := strings.Split(node.Key, "/")
-        key := keys[len(keys) - 1]
-        if node.Dir {
-            vars[key] = make(map[interface{}]interface{})
-            etcdNestedMap(node, vars[key].(map[interface{}]interface{}))
-        } else {
-            vars[key] = node.Value
-        }
-    }
-    return nil
-}
-
 var fns = template.FuncMap{
     "last": arrLast,
     "join": arrJoin,
@@ -111,7 +96,7 @@ func main() {
         node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
         client := etcd.NewClient(node)
         res, _ := client.Get(opts.EtcdKey, true, true)
-        err = etcdNestedMap(res.Node, vars)
+        etcdNestedMap(res.Node, vars)
         y["Etcd"] = vars
     }
 
