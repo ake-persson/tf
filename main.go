@@ -39,6 +39,7 @@ func main() {
     // Options
     var opts struct {
         Verbose bool `short:"v" long:"verbose" description:"Verbose"`
+        Version bool `long:"version" description:"Version"`
         Input string `short:"i" long:"input" description:"YAML input"`
         InpFile string `short:"f" long:"input-file" description:"YAML input file"`
         TemplFile string `short:"t" long:"template-file" description:"Template file"`
@@ -52,6 +53,12 @@ func main() {
     // Parse options
     _, err := flags.Parse(&opts)
     check(err)
+
+    // Print version
+    if opts.Version == true {
+        fmt.Printf("%s\n", version)
+        os.Exit(0)
+    }
 
     // Get YAML input
     var inp []byte
