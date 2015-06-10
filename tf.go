@@ -5,18 +5,13 @@ import (
     "fmt"
     "log"
     "strings"
-    "strconv"
-    "reflect"
     "io/ioutil"
     flags "github.com/jessevdk/go-flags"
     "gopkg.in/yaml.v2"
     "text/template"
     "bytes"
     etcd "github.com/coreos/go-etcd/etcd"
-//    "github.com/olekukonko/tablewriter"
 )
-
-// Convert all interface{} to string
 
 func check(e error) {
     if e != nil {
@@ -24,13 +19,14 @@ func check(e error) {
     }
 }
 
-func node_tree(node *etcd.Node, vars map[string]interface{}) error {
+// Return Etcd structure as nested map[interface{}]interface{}
+func etcdNestedMap(node *etcd.Node, vars map[interface{}]interface{}) error {
     for _, node := range node.Nodes {
         keys := strings.Split(node.Key, "/")
         key := keys[len(keys) - 1]
         if node.Dir {
-            vars[key] = make(map[string]interface{})
-            node_tree(node, vars[key].(map[string]interface{}))
+            vars[key] = make(map[interface{}]interface{})
+            etcdNestedMap(node, vars[key].(map[interface{}]interface{}))
         } else {
             vars[key] = node.Value
         }
@@ -39,32 +35,10 @@ func node_tree(node *etcd.Node, vars map[string]interface{}) error {
 }
 
 var fns = template.FuncMap{
-    "last": func(x int, a interface{}) bool {
-        return x == reflect.ValueOf(a).Len() - 1
-    },
-    "join": func(a []interface{}, sep string) string {
-        s := make([]string, len(a))
-        for i, v := range a {
-            switch v.(type) {
-                case string:
-                    s[i] = v.(string)
-                case int, int32, int64:
-                    s[i] = strconv.Itoa(v.(int))
-            }
-        }
-
-        return strings.Join(s, sep)
-    },
-    "split": func(a string, sep string) []interface{} {
-        lst := strings.Split(a, sep)
-        nlst := make([]interface{}, len(lst))
-        for i, v := range lst {
-            nlst[i] = v
-        }
-        return nlst
-    },
-//    "table": func(a []interface{}) string {
-//    }
+    "last": arrLast,
+    "join": arrJoin,
+    "split": strSplit,
+    "repeat": strRepeat,
 }
 
 func main() {
@@ -129,12 +103,12 @@ func main() {
 //    s, err := yaml.Marshal(&y)
 //    fmt.Printf("%s\n", string(s))
 
-    vars := make(map[string]interface{})
+    vars := make(map[interface{}]interface{})
     if opts.EtcdNode != "" {
         node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
         client := etcd.NewClient(node)
         res, _ := client.Get(opts.EtcdKey, true, true)
-        err = node_tree(res.Node, vars)
+        err = etcdNestedMap(res.Node, vars)
         y["Etcd"] = vars
     }
 
