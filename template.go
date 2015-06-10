@@ -45,14 +45,14 @@ func strRepeat(rep int, inp string) string {
 }
 
 // Get keys from interface{}
-func intfKeys(input interface{}) (interface{}, error) {
-    if input == nil {
+func intfKeys(inp interface{}) (interface{}, error) {
+    if inp == nil {
         return nil, nil
     }
 
-    val := reflect.ValueOf(input)
+    val := reflect.ValueOf(inp)
     if val.Kind() != reflect.Map {
-        return nil, fmt.Errorf("Cannot call keys on a non-map value: %v", input)
+        return nil, fmt.Errorf("Cannot call keys on a non-map value: %v", inp)
     }
 
     vk := val.MapKeys()
