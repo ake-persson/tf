@@ -9,7 +9,7 @@
 {{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{print ",\n"}}{{end}}{{end}}
 
 # Join single-line
-{{join .Apples ", "}}
+{{join ", " .Apples}}
 
 # Join multi-line
-{{join .Apples ",\n"}}
+{{join ",\n" .Apples}}
