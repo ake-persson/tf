@@ -127,4 +127,21 @@ func strCapitalize(str string) string {
     return ""
 }
 
+func intAdd(y int, x int) int {
+    return x + y
+}
+
+func intSub(y int, x int) int {
+    return x - y
+}
+
+func intDiv(y int, x int) int {
+    return x / y
+}
+
+func intMul(y int, x int) int {
+    return x * y
+}
+
+// odd/even
 // date/time func

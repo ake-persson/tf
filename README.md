@@ -64,6 +64,10 @@ rtrim      | $trim $string      | string, string              | Trim trailing ch
 default    | $default $optional | interface{}, ...interface{} | If no value is passed for the second arg. it returns the default
 center     | $size $string      | string, string              | Center text
 capitalize | $string            | string                      | Capitalize first character in string
+add        | $y $x              | int. int                    | Addition, arguments are in reverse order to allow pipeline
+sub        | $y $x              | int, int                    | Subtraction, arguments are in reverse order to allow pipeline
+div        | $y $x              | int, int                    | Division, arguments are in reverse order to allow pipeline
+mul        | $y $x              | int, int                    | Multiplication, arguments are in reverse order to allow pipeline
 
 ### Examples
 
@@ -74,6 +78,7 @@ echo '{{keys .Env | join "\n"}}' | tf
 echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf
 echo '{{ "Yay doink" | replace "Yay " "Ba" }}' | tf
 echo '{{ "!!! TRIM !!!" | trim "! " }}' | tf
+echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | ./tf 
 ```
 
 # Build

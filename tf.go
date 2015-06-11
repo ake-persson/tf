@@ -38,6 +38,10 @@ var fns = template.FuncMap{
     "center": strCenter,
     "random": intRandom,
     "capitalize": strCapitalize,
+    "add": intAdd,
+    "sub": intSub,
+    "div": intDiv,
+    "mul": intMul,
 }
 
 func main() {
