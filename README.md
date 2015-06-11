@@ -48,20 +48,21 @@ echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $
 
 ## Functions
 
-Function | Arguments          | Types                    | Description
--------- | ------------------ | ------------------------ | -----------
-join     | $separator $array  | string, []interface{}    | Join elements in an array to a string
-split    | $separator $string | string, string           | Split string into an array
-repeat   | $count $string     | int, string              | Repeat string x number of times
-keys     | $variable          | interface{}              | Get keys from interface{}
-type     | $variable          | interface{}              | Get data type (usefull for debugging templates)
-lower    | $string            | string                   | Convert string to lower case
-upper    | $string            | string                   | Convert string to upper case
-replace  | $old $new $string  | string, string, string   | Replace old with new in string
-trim     | $trim $string      | string, string           | Trim preceding and trailing characters
-ltrim    | $trim $string      | string, string           | Trim preceding characters
-rtrim    | $trim $string      | string, string           | Trim trailing characters
-default  | $default $optional | interface{}, interface{} | If no value is passed for the second arg. it returns the default
+Function | Arguments          | Types                       | Description
+-------- | ------------------ | --------------------------- | -----------
+join     | $separator $array  | string, []interface{}       | Join elements in an array to a string
+split    | $separator $string | string, string              | Split string into an array
+repeat   | $count $string     | int, string                 | Repeat string x number of times
+keys     | $variable          | interface{}                 | Get keys from interface{}
+type     | $variable          | interface{}                 | Get data type (usefull for debugging templates)
+lower    | $string            | string                      | Convert string to lower case
+upper    | $string            | string                      | Convert string to upper case
+replace  | $old $new $string  | string, string, string      | Replace old with new in string
+trim     | $trim $string      | string, string              | Trim preceding and trailing characters
+ltrim    | $trim $string      | string, string              | Trim preceding characters
+rtrim    | $trim $string      | string, string              | Trim trailing characters
+default  | $default $optional | interface{}, ...interface{} | If no value is passed for the second arg. it returns the default
+center   | $size $string      | string, string              | Center text
 
 ### Examples
 
