@@ -94,4 +94,12 @@ func strTrimRight(trim string, str string) string {
     return strings.TrimRight(str, trim)
 }
 
+// If no value is passed for the second arg. it returns the default
+func intfDefault(def interface{}, inp_opt ...interface{}) interface{} {
+    if len(inp_opt) > 0 {
+        def = inp_opt[0]
+    }
+    return def
+}
+
 // date/time func
