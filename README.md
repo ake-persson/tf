@@ -60,7 +60,7 @@ nl       |                        |                       | Return new-line
 
 ```bash
 echo '{{split ":" .Env.PATH | join ",\n"}}' | tf
-echo '{{repeat 20 "-"}} HELLO WORLD! {{repeat 20 "-"}}' | tf
+echo '{{repeat 20 "-"}} HELLO WORLD! {{"-" | repeat 20}}' | tf
 echo '{{keys .Env | join "\n"}}' | tf
 ```
 
