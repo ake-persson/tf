@@ -54,6 +54,8 @@ split    | $separator $string | string, string        | Split string into an arr
 repeat   | $count $string     | int, string           | Repeat string x number of times
 keys     | $variable          | interface{}           | Get keys from interface{}
 type     | $variable          | interface{}           | Get data type (usefull for debugging templates)
+lower    | $string            | string                | Convert string to lower case
+upper    | $string            | string                | Convert string to upper case
 
 ### Examples
 
@@ -61,6 +63,7 @@ type     | $variable          | interface{}           | Get data type (usefull f
 echo '{{split ":" .Env.PATH | join ",\n"}}' | tf
 echo '{{repeat 20 "-"}} HELLO WORLD! {{"-" | repeat 20}}' | tf
 echo '{{keys .Env | join "\n"}}' | tf
+echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf
 ```
 
 # Build
