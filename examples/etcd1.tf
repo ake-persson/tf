@@ -1,5 +1,6 @@
-{{ define "border" }}+{{ repeat 47 "-" }}+{{ repeat 22 "-" }}+{{ end }}
+{{ define "border" }}+{{ repeat 45 "-" }}+{{ repeat 25 "-" }}+{{ end }}
 {{ template "border" }}
-{{ printf "| %-45v | %-20v |" "host" "hwaddr" }}
+|{{ "host" | center 45 }}|{{ "hwaddr" | center 25 }}|
 {{ template "border" }}
-{{ range $k, $e := .Etcd }}{{ $hw := $e.interface.default.hwaddr | default "-" }}{{ printf "| %-45v | %-20v |\n" $k $hw }}{{ end }}{{ template "border" }}
+{{ range $k, $e := .Etcd }}|{{ $k | center 45}}|{{ $e.interface.default.hwaddr | default "-" | center 25}}|
+{{ end }}{{ template "border" }}
