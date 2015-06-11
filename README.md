@@ -29,7 +29,7 @@ Help Options:
 echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd-key /host
 ```
 
-# Extended functions amd tests
+# Extended functions and tests
 
 ## Tests
 
@@ -84,7 +84,7 @@ brew install mickep76/funk-gnarge/tf
 
 ```bash
 input='input.yaml'
-for file in $(find . -name '*.tf'); do
+for file in $(find . -type f -name '*.tf'); do
     tf -i ${input} -t ${file} -o ${file%%.tf}
 done
 ```
@@ -92,7 +92,23 @@ done
 ## Cleanup
 
 ```bash
-for file in $(find . -name '*.tf'); do
+for file in $(find . -type f -name '*.tf'); do
     rm -f ${file%%.tf}
 done
+```
+
+## Use in Makefile
+
+```
+all: build
+
+clean:
+        for file in $$(find . -type f -name '*.tf'); do \
+                rm -f $${file%%.tf} ; \
+        done
+
+build: clean
+        for file in $$(find . -type f -name '*.tf'); do \
+                ${TFBIN} -i "${YAML}" -t $${file} -o $${file%%.tf} ; \
+        done
 ```
