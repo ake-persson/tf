@@ -35,6 +35,7 @@ var fns = template.FuncMap{
     "ltrim": strTrimLeft,
     "rtrim": strTrimRight,
     "default": intfDefault,
+    "center": strCenter,
 }
 
 func main() {

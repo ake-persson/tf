@@ -102,4 +102,17 @@ func intfDefault(def interface{}, inp_opt ...interface{}) interface{} {
     return def
 }
 
+func strCenter(size int, str string) string {
+    if size < len(str) {
+        return str
+    }
+
+    pad := (size - len(str)) / 2
+    lpad := pad
+    rpad := size - len(str) - lpad
+
+    return fmt.Sprintf("%s%s%s", strings.Repeat(" ", lpad), str, strings.Repeat(" ", rpad))
+}
+
+// Capitalize first character in string
 // date/time func
