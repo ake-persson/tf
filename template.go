@@ -4,6 +4,7 @@ import (
     "fmt"
     "strings"
     "reflect"
+    "math/rand"
 )
 
 // Convert []interface{} to []string{}
@@ -114,5 +115,16 @@ func strCenter(size int, str string) string {
     return fmt.Sprintf("%s%s%s", strings.Repeat(" ", lpad), str, strings.Repeat(" ", rpad))
 }
 
+func intRandom(size int) int {
+    return rand.Intn(size)
+}
+
 // Capitalize first character in string
+func strCapitalize(str string) string {
+    for i, v := range str {
+        return strings.ToUpper(string(v)) + str[i + 1:]
+    }
+    return ""
+}
+
 // date/time func
