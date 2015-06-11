@@ -63,3 +63,27 @@ for file in $(find . -name '*.tf'); do
     rm -f ${file%%.tf}
 done
 ```
+
+# Extended functions amd tests
+
+## Tests
+
+| Test | Arguments | Description |
+| - | -  | - |
+| last | index (int), array ([]interface{}) | Determine if index is the last element in the array |
+| ismap | variable (interface{}) | Test if type is a map (nested data structure) i.e. not printable |
+
+### Examples
+
+## Functions
+
+| Function | Arguments | Description |
+| - | - | - |
+| join | separator (string), array ([]interface{}) | Join elements in an array to a string |
+| split | separator (string), string | Split string into an array |
+| repeat | count (int) string | Repeat string x number of times |
+| keys | variable (interface{}) | Get keys from interface{} |
+| type | variable (interface{}) | Get data type (usefull for debugging templates) |
+| nl | | Return new-line |
+
+### Examples

@@ -69,7 +69,7 @@ func intfType(inp interface{}) string {
     return fmt.Sprintf("%v", reflect.TypeOf(inp))
 }
 
-// Test if type is printable
+// Test if type is a map i.e. not printable
 func intfIsMap(inp interface{}) bool {
     return reflect.TypeOf(inp).Kind() == reflect.Map
 }
