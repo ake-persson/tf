@@ -42,6 +42,8 @@ var fns = template.FuncMap{
     "sub": intSub,
     "div": intDiv,
     "mul": intMul,
+    "lalign": strAlignLeft,
+    "ralign": strAlignRight,
 }
 
 func main() {

@@ -143,5 +143,25 @@ func intMul(y int, x int) int {
     return x * y
 }
 
+func strAlignLeft(size int, str string) string {
+    if size < len(str) {
+        return str
+    }
+
+    pad := (size - len(str))
+
+    return fmt.Sprintf("%s%s", str, strings.Repeat(" ", pad))
+}
+
+func strAlignRight(size int, str string) string {
+    if size < len(str) {
+        return str
+    }
+
+    pad := (size - len(str))
+
+    return fmt.Sprintf("%s%s", strings.Repeat(" ", pad), str)
+}
+
 // odd/even
 // date/time func

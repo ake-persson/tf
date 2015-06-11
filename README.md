@@ -62,7 +62,9 @@ trim       | $trim $string      | string, string              | Trim preceding a
 ltrim      | $trim $string      | string, string              | Trim preceding characters
 rtrim      | $trim $string      | string, string              | Trim trailing characters
 default    | $default $optional | interface{}, ...interface{} | If no value is passed for the second arg. it returns the default
-center     | $size $string      | string, string              | Center text
+center     | $size $string      | int, string                 | Center text
+ralign     | $size $string      | int, string                 | Center text
+lalign     | $size $string      | int, string                 | Center text
 capitalize | $string            | string                      | Capitalize first character in string
 add        | $y $x              | int, int                    | Addition, arguments are in reverse order to allow pipeline
 sub        | $y $x              | int, int                    | Subtraction, arguments are in reverse order to allow pipeline
