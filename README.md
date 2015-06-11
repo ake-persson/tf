@@ -33,10 +33,10 @@ echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd
 
 ## Tests
 
-Test  | Argument 1             | Argument 2            | Description
------ | ---------------------- | --------------------- | -----------
-last  | index (int)            | array ([]interface{}) | Determine if index is the last element in the array
-ismap | variable (interface{}) |                       | Test if type is a map (nested data structure) i.e. not printable
+Test  | Arguments | Types         | Description
+----- | --------- | ------------- | -----------
+last  | $index    | int           | array ([]interface{}) | Determine if index is the last element in the array
+ismap | $variable | $interface{}) |                       | Test if type is a map (nested data structure) i.e. not printable
 
 ### Examples
 
@@ -48,12 +48,12 @@ echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $
 ## Functions
 
 Function | Argument 1             | Argument 2            | Description
--------- | ---------------------- | --------------------- | -----------
-join     | separator (string)     | array ([]interface{}) | Join elements in an array to a string
-split    | separator (string)     | string                | Split string into an array
-repeat   | count (int)            | string                | Repeat string x number of times
-keys     | variable (interface{}) |                       | Get keys from interface{}
-type     | variable (interface{}) |                       | Get data type (usefull for debugging templates)
+-------- | ------------------- | -------------------- | -----------
+join     | $separator $array  | string, []interface{} | Join elements in an array to a string
+split    | $separator $string | string, string        | Split string into an array
+repeat   | $count $string     | int, string           | Repeat string x number of times
+keys     | $variable          | interface{}           | Get keys from interface{}
+type     | $variable          | interface{}           | Get data type (usefull for debugging templates)
 
 ### Examples
 
