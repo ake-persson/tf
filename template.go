@@ -74,4 +74,24 @@ func intfIsMap(inp interface{}) bool {
     return reflect.TypeOf(inp).Kind() == reflect.Map
 }
 
+// String replace
+func strReplace(oldStr string, newStr string, str string) string {
+    return strings.Replace(str, oldStr, newStr, -1)
+}
+
+// String trim
+func strTrim(trim string, str string) string {
+    return strings.Trim(str, trim)
+}
+
+// String trim left
+func strTrimLeft(trim string, str string) string {
+    return strings.TrimLeft(str, trim)
+}
+
+// String trim right
+func strTrimRight(trim string, str string) string {
+    return strings.TrimRight(str, trim)
+}
+
 // date/time func

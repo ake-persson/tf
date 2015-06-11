@@ -33,10 +33,11 @@ echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd
 
 ## Tests
 
-Test  | Arguments     | Types              | Description
------ | ------------- | ------------------ | -----------
-last  | $index $array | int, []interface{} | Determine if index is the last element in the array
-ismap | $variable     | $interface{}       | Test if type is a map (nested data structure) i.e. not printable
+Test     | Arguments           | Types              | Description
+-------- | ------------------- | ------------------ | -----------
+last     | $index $array       | int, []interface{} | Determine if index is the last element in the array
+ismap    | $variable           | $interface{}       | Test if type is a map (nested data structure) i.e. not printable
+contains | $string $sub-string | string, string     | Test if string contains sub-string
 
 ### Examples
 
@@ -47,15 +48,19 @@ echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $
 
 ## Functions
 
-Function | Arguments          | Types                 | Description
--------- | ------------------ | --------------------- | -----------
-join     | $separator $array  | string, []interface{} | Join elements in an array to a string
-split    | $separator $string | string, string        | Split string into an array
-repeat   | $count $string     | int, string           | Repeat string x number of times
-keys     | $variable          | interface{}           | Get keys from interface{}
-type     | $variable          | interface{}           | Get data type (usefull for debugging templates)
-lower    | $string            | string                | Convert string to lower case
-upper    | $string            | string                | Convert string to upper case
+Function | Arguments          | Types                  | Description
+-------- | ------------------ | ---------------------- | -----------
+join     | $separator $array  | string, []interface{}  | Join elements in an array to a string
+split    | $separator $string | string, string         | Split string into an array
+repeat   | $count $string     | int, string            | Repeat string x number of times
+keys     | $variable          | interface{}            | Get keys from interface{}
+type     | $variable          | interface{}            | Get data type (usefull for debugging templates)
+lower    | $string            | string                 | Convert string to lower case
+upper    | $string            | string                 | Convert string to upper case
+replace  | $old $new $string  | string, string, string | Replace old with new in string
+trim     | $trim $string      | string, string         | Trim preceding and trailing characters
+ltrim    | $trim $string      | string, string         | Trim preceding characters
+rtrim    | $trim $string      | string, string         | Trim trailing characters
 
 ### Examples
 
@@ -64,6 +69,8 @@ echo '{{split ":" .Env.PATH | join ",\n"}}' | tf
 echo '{{repeat 20 "-"}} HELLO WORLD! {{"-" | repeat 20}}' | tf
 echo '{{keys .Env | join "\n"}}' | tf
 echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf
+echo '{{ "Yay doink" | replace "Yay " "Ba" }}' | tf
+echo '{{ "!!! TRIM !!!" | trim "! " }}' | tf
 ```
 
 # Build
