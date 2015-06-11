@@ -27,6 +27,7 @@ var fns = template.FuncMap{
     "keys": intfKeys,
     "type": intfType,
     "ismap": intfIsMap,
+    "nl": newLine,
 }
 
 func main() {
