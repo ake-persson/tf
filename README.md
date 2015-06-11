@@ -100,6 +100,8 @@ done
 ## Use in Makefile
 
 ```
+INPUT=input.yaml
+
 all: build
 
 clean:
@@ -109,6 +111,6 @@ clean:
 
 build: clean
         for file in $$(find . -type f -name '*.tf'); do \
-                ${TFBIN} -i "${YAML}" -t $${file} -o $${file%%.tf} ; \
+                tf -f ${INPUT} -t $${file} -o $${file%%.tf} ; \
         done
 ```
