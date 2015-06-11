@@ -73,8 +73,3 @@ func intfType(inp interface{}) string {
 func intfIsMap(inp interface{}) bool {
     return reflect.TypeOf(inp).Kind() == reflect.Map
 }
-
-// Return new-line
-func newLine() string {
-    return "\n"
-}

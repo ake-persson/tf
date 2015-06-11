@@ -54,7 +54,6 @@ split    | separator (string)     | string                | Split string into an
 repeat   | count (int)            | string                | Repeat string x number of times
 keys     | variable (interface{}) |                       | Get keys from interface{}
 type     | variable (interface{}) |                       | Get data type (usefull for debugging templates)
-nl       |                        |                       | Return new-line
 
 ### Examples
 
