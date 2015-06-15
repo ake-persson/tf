@@ -9,9 +9,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
-        "strconv"
 )
 
 func check(e error) {
@@ -159,9 +159,18 @@ func main() {
 
 	// Write result
 	if opts.OutpFile != "" {
-                p, _ := strconv.ParseUint(opts.Permission, 8, 32)
-		err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), os.FileMode(p))
-		check(err)
+		p, err := strconv.ParseUint(opts.Permission, 8, 32)
+                check(err)
+
+                w, err := os.Create(opts.OutpFile)
+                check(err)
+
+                w.Chmod(os.FileMode(p))
+
+                _, err = w.Write(buf.Bytes())
+                check(err)
+
+                w.Close()
 	} else {
 		fmt.Printf("%v\n", buf)
 	}
