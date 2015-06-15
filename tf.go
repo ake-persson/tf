@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+        "os/user"
 )
 
 func check(e error) {
@@ -65,7 +66,8 @@ func main() {
 		InpFile    string `short:"f" long:"input-file" description:"YAML input file"`
 		TemplFile  string `short:"t" long:"template-file" description:"Template file"`
 		OutpFile   string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
-		Permission string `short:"p" long:"permission" description:"Permission for output file in octal" default:"644"`
+		Permission string `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
+		Owner      string `short:"O" long:"owner" description:"File Owner"`
 		EtcdNode   string `short:"n" long:"etcd-node" description:"Etcd Node"`
 		EtcdPort   int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
 		EtcdKey    string `short:"k" long:"etcd-key" description:"Etcd Key" default:"/"`
@@ -160,17 +162,31 @@ func main() {
 	// Write result
 	if opts.OutpFile != "" {
 		p, err := strconv.ParseUint(opts.Permission, 8, 32)
-                check(err)
+		check(err)
 
-                w, err := os.Create(opts.OutpFile)
-                check(err)
+		w, err := os.Create(opts.OutpFile)
+		check(err)
 
-                w.Chmod(os.FileMode(p))
+		w.Chmod(os.FileMode(p))
 
-                _, err = w.Write(buf.Bytes())
-                check(err)
+                if opts.Owner != "" {
+                    u, err := user.Lookup(opts.Owner)
+                    check(err)
 
-                w.Close()
+                    uid, err := strconv.Atoi(u.Uid)
+                    check(err)
+
+                    gid, err := strconv.Atoi(u.Gid)
+                    check(err)
+
+                    err = w.Chown(uid, gid)
+                    check(err)
+                }
+
+		_, err = w.Write(buf.Bytes())
+		check(err)
+
+		w.Close()
 	} else {
 		fmt.Printf("%v\n", buf)
 	}
