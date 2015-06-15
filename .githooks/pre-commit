@@ -12,7 +12,6 @@ error()
     exit 1
 }
 
-echo TEST
 which gofmt &>/dev/null || error "Failed to locate gofmt"
 
 exit_code=0
