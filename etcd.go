@@ -6,13 +6,13 @@ import (
 )
 
 // Return Etcd structure as nested map[interface{}]interface{}
-func etcdNestedMap(node *etcd.Node, data map[interface{}]interface{}) {
+func etcdNestedMap(node *etcd.Node, data map[string]interface{}) {
 	for _, node := range node.Nodes {
 		keys := strings.Split(node.Key, "/")
 		key := keys[len(keys)-1]
 		if node.Dir {
-			data[key] = make(map[interface{}]interface{})
-			etcdNestedMap(node, data[key].(map[interface{}]interface{}))
+			data[key] = make(map[string]interface{})
+			etcdNestedMap(node, data[key].(map[string]interface{}))
 		} else {
 			data[key] = node.Value
 		}

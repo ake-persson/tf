@@ -142,7 +142,7 @@ func main() {
             y["Cfg"] = t
         }
 
-	vars := make(map[interface{}]interface{})
+	vars := make(map[string]interface{})
 	if opts.EtcdNode != "" {
 		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
 		client := etcd.NewClient(node)
