@@ -44,8 +44,8 @@ var fns = template.FuncMap{
 	"mul":        intMul,
 	"lalign":     strAlignLeft,
 	"ralign":     strAlignRight,
-        "odd": odd,
-        "even": even,
+	"odd":        odd,
+	"even":       even,
 }
 
 func main() {

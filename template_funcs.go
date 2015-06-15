@@ -164,17 +164,17 @@ func strAlignRight(size int, str string) string {
 }
 
 func odd(x int) bool {
-    if (x % 2 - 1) == 0 {
-        return true
-    }
-    return false
+	if (x%2 - 1) == 0 {
+		return true
+	}
+	return false
 }
 
 func even(x int) bool {
-    if (x % 2) == 0 {
-        return true
-    }
-    return false
+	if (x % 2) == 0 {
+		return true
+	}
+	return false
 }
 
 // date/time func
