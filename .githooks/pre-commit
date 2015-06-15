@@ -25,4 +25,8 @@ for file in $files; do
     fi
 done
 
+echo -e "${GREEN}Build project to check for error(s)${RED}"
+go build || exit_code=1
+echo -en ${CLEAR}
+
 exit $exit_code
