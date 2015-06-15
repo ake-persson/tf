@@ -5,7 +5,7 @@ readonly RED='\033[31m'
 readonly GREEN='\033[32m'
 readonly YELLOW='\033[33m'
 readonly CLEAR='\033[0m'
-readonly DGREY='\033[1;30m'
+readonly GREY='\033[37m'
 
 error()
 {
@@ -19,14 +19,14 @@ exit_code=0
 files=$( git diff-index --cached HEAD --name-only | grep -E '\.go$' )
 for file in $files; do
     if [ -f $file ]; then
-        echo -e "${DGREY}+ ${GREEN}Cleanup syntax gofmt: ${file}${RED}"
+        echo -e "${GREY}+ ${GREEN}Cleanup syntax gofmt: ${file}${RED}"
         gofmt ${file} >${file}.fmt || exit_code=1
 	mv ${file}.fmt ${file}
         echo -en ${CLEAR}
     fi
 done
 
-echo -e "${DGREY}+ ${GREEN}Build project to check for error(s)${RED}"
+echo -e "${GREY}+ ${GREEN}Build project to check for error(s)${RED}"
 go build || exit_code=1
 echo -en ${CLEAR}
 
