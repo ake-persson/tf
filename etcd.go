@@ -18,4 +18,3 @@ func etcdNestedMap(node *etcd.Node, data map[interface{}]interface{}) {
         }
     }
 }
-
