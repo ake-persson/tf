@@ -15,7 +15,8 @@ Application Options:
   -f, --input-file=    YAML input file
   -t, --template-file= Template file
   -o, --output-file=   Output file (STDOUT)
-  -p, --permission=    Permission for output file (644)
+  -p, --permission=    File permissions in octal (644)
+  -O, --owner=         File Owner
   -n, --etcd-node=     Etcd Node
   -P, --etcd-port=     Etcd Port (2379)
   -k, --etcd-key=      Etcd Key (/)
