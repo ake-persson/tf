@@ -145,4 +145,4 @@ build: clean
 
 # Issues
 
-Currently Go text/template doesn't have to [suppress newlines](https://github.com/golang/go/issues/9969).
+Currently Go text/template doesn't have a way to [suppress newlines](https://github.com/golang/go/issues/9969).
