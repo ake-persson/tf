@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/BurntSushi/toml"
 	etcd "github.com/coreos/go-etcd/etcd"
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
@@ -13,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
-        "github.com/BurntSushi/toml"
+        "reflect"
 )
 
 func check(e error) {
@@ -52,6 +53,17 @@ var fns = template.FuncMap{
 	"date":       date,
 }
 
+func map_print(y map[string]interface{}, dir string, pad string) {
+    for key, val := range y {
+        if reflect.ValueOf(val).Kind() == reflect.Map {
+            fmt.Printf("%v[%v]\n", pad, key)
+            map_print(val.(map[string]interface{}), dir + "/" + key, pad + "    ")
+        } else {
+            fmt.Printf("%v%v: %v (%v)\n", pad, key, val, dir)
+        }
+    }
+}
+
 func main() {
 	// get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
@@ -85,15 +97,6 @@ func main() {
 		os.Exit(0)
 	}
 
-        if opts.Config != "" {
-            cfg, err := ioutil.ReadFile(opts.Config)
-            check(err)
-
-            var t map[string]interface{}
-            err = toml.Unmarshal(cfg, &t)
-            check(err)
-        }
-
 	// Get YAML input
 	var inp []byte
 	if opts.Input != "" {
@@ -120,7 +123,7 @@ func main() {
 	check(err)
 
 	// Get environment
-	env := make(map[string]string)
+	env := make(map[string]interface{})
 	for _, e := range os.Environ() {
 		v := strings.Split(e, "=")
 		env[v[0]] = v[1]
@@ -128,8 +131,16 @@ func main() {
 
 	y["Env"] = env
 
-	//    s, err := yaml.Marshal(&y)
-	//    fmt.Printf("%s\n", string(s))
+        // Load config file
+        if opts.Config != "" {
+            cfg, err := ioutil.ReadFile(opts.Config)
+            check(err)
+
+            var t map[string]interface{}
+            err = toml.Unmarshal(cfg, &t)
+            check(err)
+            y["Cfg"] = t
+        }
 
 	vars := make(map[interface{}]interface{})
 	if opts.EtcdNode != "" {
@@ -140,8 +151,12 @@ func main() {
 		y["Etcd"] = vars
 	}
 
-	//    s, err := yaml.Marshal(&y)
-	//    fmt.Printf("%s\n", string(s))
+        // s, err := yaml.Marshal(&y)
+        // fmt.Printf("%s\n", string(s))
+
+        if opts.Verbose {
+            map_print(y, "", "")
+        }
 
 	// Template input
 	var templ string
