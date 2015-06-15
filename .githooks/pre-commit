@@ -19,7 +19,8 @@ files=$( git diff-index --cached HEAD --name-only | grep -E '\.go$' )
 for file in $files; do
     if [ -f $file ]; then
         echo -e "${GREEN}Cleanup syntax gofmt{RED}"
-        gofmt ${file} ${file}.fmt || exit_code=1
+        gofmt ${file} >${file}.fmt || exit_code=1
+	mv ${file}.fmt ${file}
         echo -en ${CLEAR}
     fi
 done
