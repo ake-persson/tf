@@ -147,3 +147,12 @@ build: clean
 # Issues
 
 Currently Go text/template doesn't have a way to [suppress newlines](https://github.com/golang/go/issues/9969).
+
+# Roadmap
+
+- Add multiple input sources
+  + JSON/TOML support
+  + REST query support
+- Add config file
+  + Add support for multiple input sources
+  + Allow for sequencing multiple input source to have hierarhical substitution

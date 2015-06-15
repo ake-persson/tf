@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+        "github.com/BurntSushi/toml"
 )
 
 func check(e error) {
@@ -62,6 +63,7 @@ func main() {
 	var opts struct {
 		Verbose    bool   `short:"v" long:"verbose" description:"Verbose"`
 		Version    bool   `long:"version" description:"Version"`
+		Config     string `short:"c" long:"config" description:"TOML Config file"`
 		Input      string `short:"i" long:"input" description:"YAML input"`
 		InpFile    string `short:"f" long:"input-file" description:"YAML input file"`
 		TemplFile  string `short:"t" long:"template-file" description:"Template file"`
@@ -82,6 +84,15 @@ func main() {
 		fmt.Printf("%s\n", version)
 		os.Exit(0)
 	}
+
+        if opts.Config != "" {
+            cfg, err := ioutil.ReadFile(opts.Config)
+            check(err)
+
+            var t map[string]interface{}
+            err = toml.Unmarshal(cfg, &t)
+            check(err)
+        }
 
 	// Get YAML input
 	var inp []byte
