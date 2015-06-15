@@ -142,3 +142,7 @@ build: clean
                 tf -f ${INPUT} -t $${file} -o $${file%%.tf} ; \
         done
 ```
+
+# Issues
+
+Currently Go text/template doesn't have to [suppress newlines](https://github.com/golang/go/issues/9969).
