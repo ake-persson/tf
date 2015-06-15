@@ -14,6 +14,7 @@ error()
 }
 
 which gofmt &>/dev/null || error "Failed to locate gofmt"
+which go &>/dev/null || error "Failed to locate go"
 
 exit_code=0
 files=$( git diff-index --cached HEAD --name-only | grep -E '\.go$' )

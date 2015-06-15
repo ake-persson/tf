@@ -42,12 +42,15 @@ Test     | Arguments           | Types              | Description
 last     | $index $array       | int, []interface{} | Determine if index is the last element in the array
 ismap    | $variable           | $interface{}       | Test if type is a map (nested data structure) i.e. not printable
 contains | $string $sub-string | string, string     | Test if string contains sub-string
+even     | $x                  | int                | Test if x is even
+odd      | $x                  | int                | Test if x is odd
 
 ### Examples
 
 ```bash
 echo '{{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
 echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
+echo '{{1 | even }} | tf
 ```
 
 ## Functions
