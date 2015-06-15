@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Global variables
+readonly RED='\033[31m'
+readonly GREEN='\033[32m'
+readonly YELLOW='\033[33m'
+readonly CLEAR='\033[0m'
+
+error()
+{
+    echo $1 >&2
+    exit 1
+}
+
+which gofmt &>/dev/null || error "Failed to locate gofmt"
+
+exit_code=0
+files=$( git diff-index --cached HEAD --name-only | grep -E '\.go$' )
+for file in $files; do
+    if [ -f $file ]; then
+        echo -e "${GREEN}Cleanup syntax gofmt{RED}"
+        gofmt ${file} ${file}.fmt || exit_code=1
+        echo -en ${CLEAR}
+    fi
+done
+
+exit $exit_code
