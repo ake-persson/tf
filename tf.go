@@ -11,10 +11,10 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"reflect"
 	"strconv"
 	"strings"
 	"text/template"
-        "reflect"
 )
 
 func check(e error) {
@@ -54,14 +54,14 @@ var fns = template.FuncMap{
 }
 
 func map_print(y map[string]interface{}, dir string, pad string) {
-    for key, val := range y {
-        if reflect.ValueOf(val).Kind() == reflect.Map {
-            fmt.Printf("%v[%v]\n", pad, key)
-            map_print(val.(map[string]interface{}), dir + "/" + key, pad + "    ")
-        } else {
-            fmt.Printf("%v%v: %v (%v)\n", pad, key, val, dir)
-        }
-    }
+	for key, val := range y {
+		if reflect.ValueOf(val).Kind() == reflect.Map {
+			fmt.Printf("%v[%v]\n", pad, key)
+			map_print(val.(map[string]interface{}), dir+"/"+key, pad+"    ")
+		} else {
+			fmt.Printf("%v%v: %v (%v)\n", pad, key, val, dir)
+		}
+	}
 }
 
 func main() {
@@ -131,16 +131,16 @@ func main() {
 
 	y["Env"] = env
 
-        // Load config file
-        if opts.Config != "" {
-            cfg, err := ioutil.ReadFile(opts.Config)
-            check(err)
+	// Load config file
+	if opts.Config != "" {
+		cfg, err := ioutil.ReadFile(opts.Config)
+		check(err)
 
-            var t map[string]interface{}
-            err = toml.Unmarshal(cfg, &t)
-            check(err)
-            y["Cfg"] = t
-        }
+		var t map[string]interface{}
+		err = toml.Unmarshal(cfg, &t)
+		check(err)
+		y["Cfg"] = t
+	}
 
 	vars := make(map[string]interface{})
 	if opts.EtcdNode != "" {
@@ -151,12 +151,12 @@ func main() {
 		y["Etcd"] = vars
 	}
 
-        // s, err := yaml.Marshal(&y)
-        // fmt.Printf("%s\n", string(s))
+	// s, err := yaml.Marshal(&y)
+	// fmt.Printf("%s\n", string(s))
 
-        if opts.Verbose {
-            map_print(y, "", "")
-        }
+	if opts.Verbose {
+		map_print(y, "", "")
+	}
 
 	// Template input
 	var templ string
