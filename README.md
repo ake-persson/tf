@@ -22,24 +22,6 @@ Application Options:
 
 Help Options:
   -h, --help           Show this help message
-
-panic: Usage:
-  tf [OPTIONS]
-
-Application Options:
-  -v, --verbose        Verbose
-      --version        Version
-  -i, --input=         YAML input
-  -f, --input-file=    YAML input file
-  -t, --template-file= Template file
-  -o, --output-file=   Output file (STDOUT)
-  -p, --permission=    Permission for output file (644)
-  -n, --etcd-node=     Etcd Node
-  -P, --etcd-port=     Etcd Port (2379)
-  -k, --etcd-key=      Etcd Key (/)
-
-Help Options:
-  -h, --help           Show this help message
 ```
 
 # Examples
