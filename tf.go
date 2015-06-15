@@ -9,10 +9,10 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/user"
 	"strconv"
 	"strings"
 	"text/template"
-        "os/user"
 )
 
 func check(e error) {
@@ -169,19 +169,19 @@ func main() {
 
 		w.Chmod(os.FileMode(p))
 
-                if opts.Owner != "" {
-                    u, err := user.Lookup(opts.Owner)
-                    check(err)
+		if opts.Owner != "" {
+			u, err := user.Lookup(opts.Owner)
+			check(err)
 
-                    uid, err := strconv.Atoi(u.Uid)
-                    check(err)
+			uid, err := strconv.Atoi(u.Uid)
+			check(err)
 
-                    gid, err := strconv.Atoi(u.Gid)
-                    check(err)
+			gid, err := strconv.Atoi(u.Gid)
+			check(err)
 
-                    err = w.Chown(uid, gid)
-                    check(err)
-                }
+			err = w.Chown(uid, gid)
+			check(err)
+		}
 
 		_, err = w.Write(buf.Bytes())
 		check(err)
