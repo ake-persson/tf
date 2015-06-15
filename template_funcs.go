@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"reflect"
 	"strings"
+        "time"
+        "github.com/jehiah/go-strftime"
 )
 
 // Convert []interface{} to []string{}
@@ -177,4 +179,9 @@ func even(x int) bool {
 	return false
 }
 
-// date/time func
+func date(args ...interface{}) string {
+    if len(args) == 1 {
+        return strftime.Format(args[0].(string), time.Now())
+    }
+    return strftime.Format("%Y-%m-%d %H:%M:%S", time.Now())
+}

@@ -46,6 +46,7 @@ var fns = template.FuncMap{
 	"ralign":     strAlignRight,
 	"odd":        odd,
 	"even":       even,
+	"date":       date,
 }
 
 func main() {

@@ -39,11 +39,11 @@ echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd
 
 Test     | Arguments           | Types              | Description
 -------- | ------------------- | ------------------ | -----------
-last     | $index $array       | int, []interface{} | Determine if index is the last element in the array
-ismap    | $variable           | $interface{}       | Test if type is a map (nested data structure) i.e. not printable
-contains | $string $sub-string | string, string     | Test if string contains sub-string
-even     | $x                  | int                | Test if x is even
-odd      | $x                  | int                | Test if x is odd
+last     | $index $array       | int, []interface{} | Determine if $index is the last element in the $array
+ismap    | $variable           | $interface{}       | Test if $variable type is a map (nested data structure)
+contains | $string $sub-string | string, string     | Test if $string contains $sub-string
+even     | $x                  | int                | Test if $x is even
+odd      | $x                  | int                | Test if $x is odd
 
 ### Examples
 
@@ -77,6 +77,7 @@ add        | $y $x              | int, int                    | Addition, argume
 sub        | $y $x              | int, int                    | Subtraction, arguments are in reverse order to allow pipeline
 div        | $y $x              | int, int                    | Division, arguments are in reverse order to allow pipeline
 mul        | $y $x              | int, int                    | Multiplication, arguments are in reverse order to allow pipeline
+date       | $fmt               | ...interface{}              | Print date/time, optional argument strftime syntax
 
 ### Examples
 
