@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 	"text/template"
+        "strconv"
 )
 
 func check(e error) {
@@ -64,7 +65,7 @@ func main() {
 		InpFile    string `short:"f" long:"input-file" description:"YAML input file"`
 		TemplFile  string `short:"t" long:"template-file" description:"Template file"`
 		OutpFile   string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
-		Permission int    `short:"p" long:"permission" description:"Permission for output file" default:"644"`
+		Permission string `short:"p" long:"permission" description:"Permission for output file in octal" default:"644"`
 		EtcdNode   string `short:"n" long:"etcd-node" description:"Etcd Node"`
 		EtcdPort   int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
 		EtcdKey    string `short:"k" long:"etcd-key" description:"Etcd Key" default:"/"`
@@ -158,7 +159,8 @@ func main() {
 
 	// Write result
 	if opts.OutpFile != "" {
-		err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), os.FileMode(opts.Permission))
+                p, _ := strconv.ParseUint(opts.Permission, 8, 32)
+		err := ioutil.WriteFile(opts.OutpFile, buf.Bytes(), os.FileMode(p))
 		check(err)
 	} else {
 		fmt.Printf("%v\n", buf)
