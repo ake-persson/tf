@@ -7,6 +7,7 @@ import (
 	etcd "github.com/coreos/go-etcd/etcd"
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
@@ -64,6 +65,41 @@ func map_print(y map[string]interface{}, dir string, pad string) {
 	}
 }
 
+type DataFmt int
+
+const (
+        YAML DataFmt = iota
+        TOML
+        JSON
+)
+
+// Unmarshal YAML/JSON/TOML data
+func UnmarshalData(cont []byte, fmt DataFmt, data *map[string]interface{}) {
+	switch fmt {
+		case YAML:
+			err := yaml.Unmarshal(cont, &data)
+			check(err)
+		case TOML:
+			err := toml.Unmarshal(cont, &data)
+			check(err)
+		case JSON:
+	        err := json.Unmarshal(cont, &data)
+			check(err)
+		default:
+			log.Fatal("Unsupported data format")
+	}
+}
+
+// Load YAML/JSON/TOML file
+func LoadFile(fn string, fmt DataFmt, data *map[string]interface{}) {
+	if _, err := os.Stat(fn); os.IsNotExist(err) {
+		log.Fatal("File doesn't exist: %s\n", fn)
+	}
+	cont, err := ioutil.ReadFile(fn)
+	check(err)
+	UnmarshalData(cont, fmt, data)
+}
+
 func main() {
 	// get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
@@ -97,7 +133,18 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Get YAML input
+	// Get input
+    y := make(map[string]interface{})
+    if opts.Input != "" {
+		if opts.InpFile != "" {
+			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
+		}
+		UnmarshalData([]byte(opts.Input), YAML, &y)
+    } else if opts.InpFile != "" {
+		LoadFile(opts.InpFile, YAML, &y)
+	}
+
+/*
 	var inp []byte
 	if opts.Input != "" {
 		if opts.InpFile != "" {
@@ -121,6 +168,7 @@ func main() {
 	var y map[string]interface{}
 	err = yaml.Unmarshal(inp, &y)
 	check(err)
+*/
 
 	// Get environment
 	env := make(map[string]interface{})
@@ -140,7 +188,17 @@ func main() {
 		err = toml.Unmarshal(cfg, &t)
 		check(err)
 		y["Cfg"] = t
+
+		if reflect.ValueOf(t["inputs"]).Kind() == reflect.Map {
+	        var i map[string]interface{}
+			i = t["inputs"].(map[string]interface{})
+
+			for key, val := range i {
+				fmt.Printf("%v, %v\n", key, val)
+			}
+		}
 	}
+
 
 	vars := make(map[string]interface{})
 	if opts.EtcdNode != "" {
