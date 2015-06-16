@@ -1,9 +1,9 @@
 package main
 
 import (
-	"errors"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	etcd "github.com/coreos/go-etcd/etcd"
@@ -14,11 +14,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"os"
 	"os/user"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
 	"text/template"
-	"path/filepath"
 )
 
 func check(e error) {
@@ -92,7 +92,7 @@ func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
 		}
 	default:
 		log.Error("Unsupported data format")
-	    return nil, errors.New("Unsupported data format")
+		return nil, errors.New("Unsupported data format")
 	}
 
 	return v, nil
@@ -101,6 +101,7 @@ func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
 // Load file with serialized data.
 func LoadFile(fn string) (map[string]interface{}, error) {
 	var fmt DataFmt
+
 	switch filepath.Ext(fn) {
 	case ".yaml":
 		fmt = YAML
@@ -109,8 +110,8 @@ func LoadFile(fn string) (map[string]interface{}, error) {
 	case ".toml":
 		fmt = TOML
 	default:
-        log.Error("Unsupported data format")
-	    return nil, errors.New("Unsupported data format")
+		log.Error("Unsupported data format, needs to be .yaml, .json or .toml")
+		return nil, errors.New("Unsupported data format")
 	}
 
 	_, err := os.Stat(fn)
@@ -120,13 +121,13 @@ func LoadFile(fn string) (map[string]interface{}, error) {
 	}
 
 	log.Infof("Reading file: %s", fn)
-	cont, err := ioutil.ReadFile(fn)
+	c, err := ioutil.ReadFile(fn)
 	if err != nil {
 		log.Errorf("Failed to read file: %s", fn)
 		return nil, err
 	}
 
-	v, err2 := UnmarshalData(cont, fmt)
+	v, err2 := UnmarshalData(c, fmt)
 	if err2 != nil {
 		return nil, err2
 	}
@@ -136,14 +137,14 @@ func LoadFile(fn string) (map[string]interface{}, error) {
 
 // Get OS Environment variables.
 func GetOSEnv() map[string]interface{} {
-	r := make(map[string]interface{})
+	v := make(map[string]interface{})
 
 	for _, e := range os.Environ() {
-		v := strings.Split(e, "=")
-		r[v[0]] = v[1]
+		a := strings.Split(e, "=")
+		v[a[0]] = a[1]
 	}
 
-	return r
+	return v
 }
 
 func main() {
@@ -159,8 +160,9 @@ func main() {
 		Verbose    bool   `short:"v" long:"verbose" description:"Verbose"`
 		Version    bool   `long:"version" description:"Version"`
 		Config     string `short:"c" long:"config" description:"TOML Config file"`
-		Input      string `short:"i" long:"input" description:"YAML input"`
-		InpFile    string `short:"f" long:"input-file" description:"YAML input file"`
+		Input      string `short:"i" long:"input" description:"Input, defaults to using YAML"`
+		InpFormat  string `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
+		InpFile    string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
 		TemplFile  string `short:"t" long:"template-file" description:"Template file"`
 		OutpFile   string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
 		Permission string `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
@@ -186,7 +188,18 @@ func main() {
 		if opts.InpFile != "" {
 			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
 		}
-		y, err = UnmarshalData([]byte(opts.Input), YAML)
+	    var fmt DataFmt
+		switch opts.InpFormat {
+			case "YAML":
+				fmt = YAML
+			case "TOML":
+				fmt = TOML
+			case "JSON":
+				fmt = JSON
+			default:
+				log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
+		}
+		y, err = UnmarshalData([]byte(opts.Input), fmt)
 		check(err)
 	} else if opts.InpFile != "" {
 		y, err = LoadFile(opts.InpFile)
