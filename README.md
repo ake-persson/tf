@@ -49,8 +49,8 @@ odd      | $x                  | int                | Test if $x is odd
 ### Examples
 
 ```bash
-echo '{{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
-echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
+echo '{{range $i, $e := .Inp.Apples}}Apple: {{$e}}{{if last $i $.Inp.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
+echo '{{range $k, $e := .Inp.Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
 echo '{{1 | even }} | tf
 ```
 
@@ -87,7 +87,7 @@ echo '{{split ":" .Env.PATH | join ",\n"}}' | tf
 echo '{{repeat 20 "-"}} HELLO WORLD! {{"-" | repeat 20}}' | tf
 echo '{{keys .Env | join "\n"}}' | tf
 echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf
-echo '{{ "Yay doink" | replace "Yay " "Ba" }}' | tf
+echo '{{ "Doo Doo" | replace "Doo" "Doo is extinct" }}' | tf
 echo '{{ "!!! TRIM !!!" | trim "! " }}' | tf
 echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | ./tf 
 ```
