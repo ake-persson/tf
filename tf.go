@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-//	"log"
+	//	"log"
 	log "github.com/Sirupsen/logrus"
 	"os"
 	"os/user"
@@ -17,6 +18,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"path/filepath"
 )
 
 func check(e error) {
@@ -55,29 +57,19 @@ var fns = template.FuncMap{
 	"date":       date,
 }
 
-func map_print(y map[string]interface{}, dir string, pad string) {
-	for key, val := range y {
-		if reflect.ValueOf(val).Kind() == reflect.Map {
-			fmt.Printf("%v[%v]\n", pad, key)
-			map_print(val.(map[string]interface{}), dir+"/"+key, pad+"    ")
-		} else {
-			fmt.Printf("%v%v: %v (%v)\n", pad, key, val, dir)
-		}
-	}
-}
-
-// Data format type and constants
+// Data format represents which data serialization is used YAML, JSON or TOML.
 type DataFmt int
 
+// Constants for data format.
 const (
 	YAML DataFmt = iota
 	TOML
 	JSON
 )
 
-// Unmarshal YAML/JSON/TOML data
+// Unmarshal YAML/JSON/TOML serialized data.
 func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
-    v := make(map[string]interface{})
+	v := make(map[string]interface{})
 
 	switch fmt {
 	case YAML:
@@ -100,14 +92,27 @@ func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
 		}
 	default:
 		log.Error("Unsupported data format")
-		// Placeholder: return error
+	    return nil, errors.New("Unsupported data format")
 	}
 
 	return v, nil
 }
 
-// Load YAML/JSON/TOML file
-func LoadFile(fn string, fmt DataFmt) (map[string]interface{}, error) {
+// Load file with serialized data.
+func LoadFile(fn string) (map[string]interface{}, error) {
+	var fmt DataFmt
+	switch filepath.Ext(fn) {
+	case ".yaml":
+		fmt = YAML
+	case ".json":
+		fmt = JSON
+	case ".toml":
+		fmt = TOML
+	default:
+        log.Error("Unsupported data format")
+	    return nil, errors.New("Unsupported data format")
+	}
+
 	_, err := os.Stat(fn)
 	if os.IsNotExist(err) {
 		log.Errorf("File doesn't exist: %s", fn)
@@ -129,14 +134,14 @@ func LoadFile(fn string, fmt DataFmt) (map[string]interface{}, error) {
 	return v, nil
 }
 
-// Get OS Environment variables
+// Get OS Environment variables.
 func GetOSEnv() map[string]interface{} {
-    r := make(map[string]interface{})
+	r := make(map[string]interface{})
 
-    for _, e := range os.Environ() {
-        v := strings.Split(e, "=")
-        r[v[0]] = v[1]
-    }
+	for _, e := range os.Environ() {
+		v := strings.Split(e, "=")
+		r[v[0]] = v[1]
+	}
 
 	return r
 }
@@ -184,10 +189,10 @@ func main() {
 		y, err = UnmarshalData([]byte(opts.Input), YAML)
 		check(err)
 	} else if opts.InpFile != "" {
-		y, err = LoadFile(opts.InpFile, YAML)
+		y, err = LoadFile(opts.InpFile)
 		check(err)
 	} else {
- 	   y = make(map[string]interface{})
+		y = make(map[string]interface{})
 	}
 
 	// Get environment
@@ -223,11 +228,9 @@ func main() {
 		y["Etcd"] = vars
 	}
 
-	// s, err := yaml.Marshal(&y)
-	// fmt.Printf("%s\n", string(s))
-
 	if opts.Verbose {
-		map_print(y, "", "")
+		s, _ := yaml.Marshal(&y)
+		fmt.Printf("%s\n", string(s))
 	}
 
 	// Template input
