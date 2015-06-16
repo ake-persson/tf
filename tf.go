@@ -10,7 +10,6 @@ import (
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	//	"log"
 	log "github.com/Sirupsen/logrus"
 	"os"
 	"os/user"
@@ -188,16 +187,16 @@ func main() {
 		if opts.InpFile != "" {
 			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
 		}
-	    var fmt DataFmt
+		var fmt DataFmt
 		switch opts.InpFormat {
-			case "YAML":
-				fmt = YAML
-			case "TOML":
-				fmt = TOML
-			case "JSON":
-				fmt = JSON
-			default:
-				log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
+		case "YAML":
+			fmt = YAML
+		case "TOML":
+			fmt = TOML
+		case "JSON":
+			fmt = JSON
+		default:
+			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 		}
 		y, err = UnmarshalData([]byte(opts.Input), fmt)
 		check(err)
@@ -214,19 +213,12 @@ func main() {
 
 	// Load config file
 	if opts.Config != "" {
-		cfg, err := ioutil.ReadFile(opts.Config)
-		check(err)
+        c, err := LoadFile(opts.Config)
+        check(err)
+		y["Cfg"] = c
 
-		var t map[string]interface{}
-		err = toml.Unmarshal(cfg, &t)
-		check(err)
-		y["Cfg"] = t
-
-		if reflect.ValueOf(t["inputs"]).Kind() == reflect.Map {
-			var i map[string]interface{}
-			i = t["inputs"].(map[string]interface{})
-
-			for key, val := range i {
+		if reflect.ValueOf(c["inputs"]).Kind() == reflect.Map {
+			for key, val := range c["inputs"].(map[string]interface{}) {
 				fmt.Printf("%v, %v\n", key, val)
 			}
 		}
