@@ -88,7 +88,7 @@ func main() {
 	}
 
 	// Get input
-//	var y map[string]interface{}
+	//	var y map[string]interface{}
 	y := make(map[string]interface{})
 	if opts.Input != "" {
 		if opts.InpFile != "" {

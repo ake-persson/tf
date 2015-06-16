@@ -7,7 +7,7 @@ import (
 
 // Create a nested data structure from Etcd node.
 func EtcdMap(root *etcd.Node) map[string]interface{} {
-    v := make(map[string]interface{})
+	v := make(map[string]interface{})
 
 	for _, n := range root.Nodes {
 		keys := strings.Split(n.Key, "/")
