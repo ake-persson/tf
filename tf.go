@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	log "github.com/Sirupsen/logrus"
 	etcd "github.com/coreos/go-etcd/etcd"
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	log "github.com/Sirupsen/logrus"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -213,8 +213,8 @@ func main() {
 
 	// Load config file
 	if opts.Config != "" {
-        c, err := LoadFile(opts.Config)
-        check(err)
+		c, err := LoadFile(opts.Config)
+		check(err)
 		y["Cfg"] = c
 
 		if reflect.ValueOf(c["inputs"]).Kind() == reflect.Map {

@@ -156,3 +156,4 @@ Currently Go text/template doesn't have a way to [suppress newlines](https://git
 - Add config file
   + Add support for multiple input sources
   + Allow for sequencing multiple input source to have hierarhical substitution
+- Add templating inside input files
