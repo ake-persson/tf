@@ -5,16 +5,19 @@ import (
 	"strings"
 )
 
-// Return Etcd structure as nested map[interface{}]interface{}
-func etcdNestedMap(node *etcd.Node, data map[string]interface{}) {
-	for _, node := range node.Nodes {
-		keys := strings.Split(node.Key, "/")
-		key := keys[len(keys)-1]
-		if node.Dir {
-			data[key] = make(map[string]interface{})
-			etcdNestedMap(node, data[key].(map[string]interface{}))
+// Create a nested data structure from Etcd node.
+func EtcdMap(root *etcd.Node) map[string]interface{} {
+    v := make(map[string]interface{})
+
+	for _, n := range root.Nodes {
+		keys := strings.Split(n.Key, "/")
+		k := keys[len(keys)-1]
+		if n.Dir {
+			v[k] = make(map[string]interface{})
+			v[k] = EtcdMap(n)
 		} else {
-			data[key] = node.Value
+			v[k] = n.Value
 		}
 	}
+	return v
 }

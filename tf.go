@@ -88,7 +88,8 @@ func main() {
 	}
 
 	// Get input
-	var y map[string]interface{}
+//	var y map[string]interface{}
+	y := make(map[string]interface{})
 	if opts.Input != "" {
 		if opts.InpFile != "" {
 			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
@@ -104,13 +105,16 @@ func main() {
 		default:
 			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 		}
-		y, err = UnmarshalData([]byte(opts.Input), fmt)
+		v, err := UnmarshalData([]byte(opts.Input), fmt)
 		check(err)
+		y["Inp"] = v
 	} else if opts.InpFile != "" {
-		y, err = LoadFile(opts.InpFile)
+		v, err := LoadFile(opts.InpFile)
 		check(err)
+		y["Inp"] = v
 	} else {
-		y = make(map[string]interface{})
+		v := make(map[string]interface{})
+		y["Inp"] = v
 	}
 
 	// Get environment
@@ -130,13 +134,12 @@ func main() {
 		}
 	}
 
-	vars := make(map[string]interface{})
 	if opts.EtcdNode != "" {
 		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
 		client := etcd.NewClient(node)
 		res, _ := client.Get(opts.EtcdKey, true, true)
-		etcdNestedMap(res.Node, vars)
-		y["Etcd"] = vars
+		e := EtcdMap(res.Node)
+		y["Etcd"] = e
 	}
 
 	if opts.Verbose {
