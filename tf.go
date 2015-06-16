@@ -2,14 +2,15 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	etcd "github.com/coreos/go-etcd/etcd"
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
-	"encoding/json"
 	"io/ioutil"
-	"log"
+//	"log"
+	log "github.com/Sirupsen/logrus"
 	"os"
 	"os/user"
 	"reflect"
@@ -65,47 +66,88 @@ func map_print(y map[string]interface{}, dir string, pad string) {
 	}
 }
 
+// Data format type and constants
 type DataFmt int
 
 const (
-        YAML DataFmt = iota
-        TOML
-        JSON
+	YAML DataFmt = iota
+	TOML
+	JSON
 )
 
 // Unmarshal YAML/JSON/TOML data
-func UnmarshalData(cont []byte, fmt DataFmt, data *map[string]interface{}) {
+func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
+    v := make(map[string]interface{})
+
 	switch fmt {
-		case YAML:
-			err := yaml.Unmarshal(cont, &data)
-			check(err)
-		case TOML:
-			err := toml.Unmarshal(cont, &data)
-			check(err)
-		case JSON:
-	        err := json.Unmarshal(cont, &data)
-			check(err)
-		default:
-			log.Fatal("Unsupported data format")
+	case YAML:
+		log.Info("Unmarshaling YAML data")
+		err := yaml.Unmarshal(cont, &v)
+		if err != nil {
+			return nil, err
+		}
+	case TOML:
+		log.Info("Unmarshaling TOML data")
+		err := toml.Unmarshal(cont, &v)
+		if err != nil {
+			return nil, err
+		}
+	case JSON:
+		log.Info("Unmarshaling JSON data")
+		err := json.Unmarshal(cont, &v)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		log.Error("Unsupported data format")
+		// Placeholder: return error
 	}
+
+	return v, nil
 }
 
 // Load YAML/JSON/TOML file
-func LoadFile(fn string, fmt DataFmt, data *map[string]interface{}) {
-	if _, err := os.Stat(fn); os.IsNotExist(err) {
-		log.Fatal("File doesn't exist: %s\n", fn)
+func LoadFile(fn string, fmt DataFmt) (map[string]interface{}, error) {
+	_, err := os.Stat(fn)
+	if os.IsNotExist(err) {
+		log.Errorf("File doesn't exist: %s", fn)
+		return nil, err
 	}
+
+	log.Infof("Reading file: %s", fn)
 	cont, err := ioutil.ReadFile(fn)
-	check(err)
-	UnmarshalData(cont, fmt, data)
+	if err != nil {
+		log.Errorf("Failed to read file: %s", fn)
+		return nil, err
+	}
+
+	v, err2 := UnmarshalData(cont, fmt)
+	if err2 != nil {
+		return nil, err2
+	}
+
+	return v, nil
+}
+
+// Get OS Environment variables
+func GetOSEnv() map[string]interface{} {
+    r := make(map[string]interface{})
+
+    for _, e := range os.Environ() {
+        v := strings.Split(e, "=")
+        r[v[0]] = v[1]
+    }
+
+	return r
 }
 
 func main() {
 	// get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
 
-	// Initialize log
-	log := log.New(os.Stderr, "", 0)
+	// Set log options
+	log.SetOutput(os.Stderr)
+	log.SetLevel(log.InfoLevel)
 
 	// Options
 	var opts struct {
@@ -129,54 +171,27 @@ func main() {
 
 	// Print version
 	if opts.Version == true {
-		fmt.Printf("%s\n", version)
+		fmt.Println(version)
 		os.Exit(0)
 	}
 
 	// Get input
-    y := make(map[string]interface{})
-    if opts.Input != "" {
-		if opts.InpFile != "" {
-			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
-		}
-		UnmarshalData([]byte(opts.Input), YAML, &y)
-    } else if opts.InpFile != "" {
-		LoadFile(opts.InpFile, YAML, &y)
-	}
-
-/*
-	var inp []byte
+	var y map[string]interface{}
 	if opts.Input != "" {
 		if opts.InpFile != "" {
 			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
-			os.Exit(1)
 		}
-		inp = []byte(opts.Input)
-	} else if opts.InpFile != "" {
-		if _, err := os.Stat(opts.InpFile); os.IsNotExist(err) {
-			log.Printf("File doesn't exist: %v\n", opts.InpFile)
-			os.Exit(1)
-		}
-		content, err := ioutil.ReadFile(opts.InpFile)
+		y, err = UnmarshalData([]byte(opts.Input), YAML)
 		check(err)
-		inp = content
+	} else if opts.InpFile != "" {
+		y, err = LoadFile(opts.InpFile, YAML)
+		check(err)
 	} else {
-		inp = []byte("{}")
+ 	   y = make(map[string]interface{})
 	}
-
-	// Decode YAML
-	var y map[string]interface{}
-	err = yaml.Unmarshal(inp, &y)
-	check(err)
-*/
 
 	// Get environment
-	env := make(map[string]interface{})
-	for _, e := range os.Environ() {
-		v := strings.Split(e, "=")
-		env[v[0]] = v[1]
-	}
-
+	env := GetOSEnv()
 	y["Env"] = env
 
 	// Load config file
@@ -190,7 +205,7 @@ func main() {
 		y["Cfg"] = t
 
 		if reflect.ValueOf(t["inputs"]).Kind() == reflect.Map {
-	        var i map[string]interface{}
+			var i map[string]interface{}
 			i = t["inputs"].(map[string]interface{})
 
 			for key, val := range i {
@@ -198,7 +213,6 @@ func main() {
 			}
 		}
 	}
-
 
 	vars := make(map[string]interface{})
 	if opts.EtcdNode != "" {
