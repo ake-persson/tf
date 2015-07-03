@@ -1,0 +1,6 @@
+[input]
+order = ["example"]
+
+[inputs.Example]
+type = "file"
+path = "examples/example.yaml"

@@ -52,6 +52,12 @@ var fns = template.FuncMap{
 	"date":       date,
 }
 
+type Input struct {
+	Name	string
+	Type	string
+	Path	string
+}
+
 func main() {
 	// get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
@@ -131,8 +137,25 @@ func main() {
 		y["Cfg"] = c
 
 		if reflect.ValueOf(c["inputs"]).Kind() == reflect.Map {
-			for key, val := range c["inputs"].(map[string]interface{}) {
-				fmt.Printf("%v, %v\n", key, val)
+			for k1, v1 := range c["inputs"].(map[string]interface{}) {
+				var inp Input
+				inp.Name = k1
+				for k2, v2 := range v1.(map[string]interface{}) {
+					switch k2 {
+					case "type":
+						inp.Type = v2.(string)
+					case "path":
+						inp.Path = v2.(string)
+					}
+				}
+				switch inp.Type {
+				case "file":
+					c, err := LoadFile(inp.Path)
+					check(err)
+					y[inp.Name] = c
+				default:
+					log.Fatalf("Unknown type in config [%v]: %v", inp.Name, inp.Type)
+				}
 			}
 		}
 	}
