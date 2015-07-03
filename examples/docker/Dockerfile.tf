@@ -2,7 +2,7 @@
 FROM {{.Image}}:{{.ImageVersion}}
 
 # Configure timezone
-RUN ln -sf /usr/share/zoneinfo/{{.TimeZone}} /etc/localtime
+RUN ln -sf /usr/share/zoneinfo/{{.File.TimeZone}} /etc/localtime
 COPY etc/sysconfig/clock /etc/sysconfig/clock
 
 # Configure ntpdate
