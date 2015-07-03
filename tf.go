@@ -106,10 +106,10 @@ func main() {
 		check(err)
 		y = v
 		y["Arg"] = v
-    } else {
-        v := make(map[string]interface{})
-        y["Arg"] = v
-    }
+	} else {
+		v := make(map[string]interface{})
+		y["Arg"] = v
+	}
 
 	if opts.InpFile != "" {
 		v, err := LoadFile(opts.InpFile)
