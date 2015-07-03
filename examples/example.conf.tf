@@ -1,12 +1,12 @@
 # My templated fictitious configuration file
 
 [main]
-region = {{ .Inp.region }}
-country = {{ .Inp.country }}
+region = {{ .File.region }}
+country = {{ .File.country }}
 
-{{ range .Inp.list }}{{ . }},{{ end }}
+{{ range .File.list }}{{ . }},{{ end }}
 
-{{ if eq .Inp.region "amer" }}
+{{ if eq .File.region "amer" }}
 [amer]
 city = New York
 {{ end }}

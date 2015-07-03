@@ -91,9 +91,6 @@ func main() {
 	//	var y map[string]interface{}
 	y := make(map[string]interface{})
 	if opts.Input != "" {
-		if opts.InpFile != "" {
-			log.Fatal("Can't specify both --input (-i) and --input-file (-f)\n")
-		}
 		var fmt DataFmt
 		switch opts.InpFormat {
 		case "YAML":
@@ -108,14 +105,16 @@ func main() {
 		v, err := UnmarshalData([]byte(opts.Input), fmt)
 		check(err)
 		y = v
-		y["Inp"] = v
-	} else if opts.InpFile != "" {
+		y["Arg"] = v
+    } else {
+        v := make(map[string]interface{})
+        y["Arg"] = v
+    }
+
+	if opts.InpFile != "" {
 		v, err := LoadFile(opts.InpFile)
 		check(err)
-		y["Inp"] = v
-	} else {
-		v := make(map[string]interface{})
-		y["Inp"] = v
+		y["File"] = v
 	}
 
 	// Get environment

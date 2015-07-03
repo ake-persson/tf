@@ -27,6 +27,14 @@ Help Options:
   -h, --help           Show this help message
 ```
 
+Input will have it's own namespace such as Arg, File, Env, Etcd. you can also get this by:
+
+```bash
+echo '{{keys .}} | tf
+```
+
+Argument input will also be in the root scope for convenience.
+
 # Examples
 
 ```bash
@@ -54,8 +62,8 @@ odd      | $x                  | int                | Test if $x is odd
 ### Examples
 
 ```bash
-echo '{{range $i, $e := .Inp.Apples}}Apple: {{$e}}{{if last $i $.Inp.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
-echo '{{range $k, $e := .Inp.Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
+echo '{{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
+echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
 echo '{{1 | even }} | tf
 ```
 
