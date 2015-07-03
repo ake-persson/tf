@@ -1,2 +1,2 @@
-ZONE="{{.TimeZone}}"
+ZONE="{{.File.TimeZone}}"
 UTC=true

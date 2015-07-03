@@ -2,3 +2,4 @@ TimeServers:
 - ntp1
 - ntp2
 - ntp3
+TimeZone: Etc/UTC

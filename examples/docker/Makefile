@@ -6,7 +6,7 @@ USER=myuser
 PASS=mypass
 MAIL=myuser@example.com
 REGISTRY=myregistry
-YAML={Registry: '${REGISTRY}', Image: '${IMAGE}', ImageVersion: '${VERSION}', TimeZone: 'Etc/UTC', TimeServers: ['ntp1', 'ntp2', 'ntp3']}
+YAML={Registry: '${REGISTRY}', Image: '${IMAGE}', ImageVersion: '${VERSION}'}
 
 all: build
 
@@ -18,7 +18,7 @@ clean:
 
 template: clean
 	for file in $$(find . -name '*.tf'); do \
-		tf -i "${YAML}" -t $${file} -o $${file%%.tf} ; \
+		tf -f input.yaml -i "${YAML}" -t $${file} -o $${file%%.tf} ; \
 	done
 
 build: template
