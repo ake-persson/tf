@@ -11,7 +11,7 @@ Usage:
 Application Options:
   -v, --verbose        Verbose
       --version        Version
-  -c, --config=        TOML Config file
+  -c, --config=        YAML, TOML or JSON config file
   -i, --input=         Input, defaults to using YAML
   -F, --input-format=  Data serialization format YAML, TOML or JSON (YAML)
   -f, --input-file=    Input file, data serialization format used is based on the file extension

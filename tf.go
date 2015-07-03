@@ -64,7 +64,7 @@ func main() {
 	var opts struct {
 		Verbose    bool   `short:"v" long:"verbose" description:"Verbose"`
 		Version    bool   `long:"version" description:"Version"`
-		Config     string `short:"c" long:"config" description:"TOML Config file"`
+		Config     string `short:"c" long:"config" description:"YAML, TOML or JSON config file"`
 		Input      string `short:"i" long:"input" description:"Input, defaults to using YAML"`
 		InpFormat  string `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
 		InpFile    string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
