@@ -157,7 +157,7 @@ func main() {
 					if y[inp.Name] == nil {
 						y[inp.Name] = c
 					} else {
-//					    y2 := make(map[string]interface{})
+						//					    y2 := make(map[string]interface{})
 						y2 := y[inp.Name].(map[string]interface{})
 						for k, v := range c {
 							y2[k] = v
