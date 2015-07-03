@@ -1,5 +1,5 @@
 IMAGE=centos
-VERSION=7
+VERSION=centos7.1.1503
 NAME=${IMAGE}-${VERSION}-ntpd
 RELEASE:=$(shell git rev-parse --verify --short HEAD)
 USER=myuser

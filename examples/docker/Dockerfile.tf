@@ -9,9 +9,6 @@ COPY etc/sysconfig/clock /etc/sysconfig/clock
 RUN yum install -y ntpdate 
 COPY etc/sysconfig/ntpdate /etc/sysconfig/ntpdate
 
-# Remove chrony since we're using ntpd
-RUN yum remove -y chrony
-
 # Configure ntpd
 RUN yum install -y ntp 
 COPY etc/ntp.conf /etc/ntp.conf
