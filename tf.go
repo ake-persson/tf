@@ -87,8 +87,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Get input
-	//	var y map[string]interface{}
+	// Get argument input
 	y := make(map[string]interface{})
 	if opts.Input != "" {
 		var fmt DataFmt
@@ -106,11 +105,9 @@ func main() {
 		check(err)
 		y = v
 		y["Arg"] = v
-	} else {
-		v := make(map[string]interface{})
-		y["Arg"] = v
 	}
 
+	// Get file input
 	if opts.InpFile != "" {
 		v, err := LoadFile(opts.InpFile)
 		check(err)
