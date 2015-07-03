@@ -1,6 +1,6 @@
 # tf - Template File
 
-Template file in Bash using YAML input and GO text template (http://golang.org/pkg/text/template/).
+Template Dockerfile or any file in Bash using YAML input and GO text template (http://golang.org/pkg/text/template/).
 
 # Usage
 
@@ -34,7 +34,7 @@ Help Options:
 echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd-key /host
 ```
 
-You can find a more complete example in "examples/docker" for templating Dockerile and configuration files, this was
+You can find a more complete example in "examples/docker" for templating Dockerfile and configuration files, this was
 primary use-case for this project. However it's pretty generic and could be used for any templating in Bash.
 
 # Extended functions and tests
