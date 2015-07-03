@@ -53,9 +53,9 @@ var fns = template.FuncMap{
 }
 
 type Input struct {
-	Name	string
-	Type	string
-	Path	string
+	Name string
+	Type string
+	Path string
 }
 
 func main() {
@@ -142,6 +142,8 @@ func main() {
 				inp.Name = k1
 				for k2, v2 := range v1.(map[string]interface{}) {
 					switch k2 {
+					case "name":
+						inp.Name = v2.(string)
 					case "type":
 						inp.Type = v2.(string)
 					case "path":
@@ -152,9 +154,17 @@ func main() {
 				case "file":
 					c, err := LoadFile(inp.Path)
 					check(err)
-					y[inp.Name] = c
+					if y[inp.Name] == nil {
+						y[inp.Name] = c
+					} else {
+//					    y2 := make(map[string]interface{})
+						y2 := y[inp.Name].(map[string]interface{})
+						for k, v := range c {
+							y2[k] = v
+						}
+					}
 				default:
-					log.Fatalf("Unknown type in config [%v]: %v", inp.Name, inp.Type)
+					log.Fatalf("Unknown type in config inputs.%v.Type: %v", inp.Name, inp.Type)
 				}
 			}
 		}

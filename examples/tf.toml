@@ -4,3 +4,17 @@ order = ["example"]
 [inputs.Example]
 type = "file"
 path = "examples/example.yaml"
+
+[inputs.Example2]
+type = "file"
+path = "examples/example2.toml"
+
+[inputs.Subst1]
+name = "Subst"
+type = "file"
+path = "examples/example.yaml"
+
+[inputs.Subst2]
+name = "Subst"
+type = "file"
+path = "examples/example2.toml"
