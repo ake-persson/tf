@@ -79,6 +79,12 @@ func main() {
 
 	// Parse options
 	_, err := flags.Parse(&opts)
+	if err != nil {
+		ferr := err.(*flags.Error)
+		if ferr.Type == flags.ErrHelp {
+			os.Exit(1)
+		}
+	}
 	check(err)
 
 	// Print version
