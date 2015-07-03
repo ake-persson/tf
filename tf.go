@@ -107,6 +107,7 @@ func main() {
 		}
 		v, err := UnmarshalData([]byte(opts.Input), fmt)
 		check(err)
+		y = v
 		y["Inp"] = v
 	} else if opts.InpFile != "" {
 		v, err := LoadFile(opts.InpFile)
