@@ -6,5 +6,17 @@ path = "examples/example.yaml"
 type = "file"
 path = "examples/example2.toml"
 
-[merge.Merged]
-inputs = [ "Example", "Example2" ]
+[inputs.Global]
+type = "etcd"
+etcd_node = "etcd1"
+etcd_port = 5001
+etcd_dir = "/global"
+
+[inputs.Subnet]
+type = "etcd"
+etcd_node = "etcd1"
+etcd_port = 5001
+etcd_dir = "/subnet"
+
+[merge.Config]
+inputs = [ "Global", "Subnet" ]

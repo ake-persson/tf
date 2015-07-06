@@ -164,6 +164,7 @@ Currently Go text/template doesn't have a way to [suppress newlines](https://git
 # Roadmap
 
 - REST query support
-- Add templating inside input files
-- Implicit order for inputs when doing substitutioning
+- Template input file based on .Env/.Arg
+- Template config file based on .Env/.Arg/.File/.Etcd
+  + This would allow for ex. per host data request like 'etcd_dir = "/host/{{ .Arg.Host }}"'
 - Add sort array asc. and desc. templ. func.
