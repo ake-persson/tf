@@ -58,6 +58,11 @@ type Input struct {
 	Path string
 }
 
+type Merge struct {
+    Name string
+    Inputs []interface{}
+}
+
 func main() {
 	// get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
@@ -148,6 +153,8 @@ func main() {
 						inp.Type = v2.(string)
 					case "path":
 						inp.Path = v2.(string)
+                    default:
+                        log.Fatalf("Invalid key in configuration file inputs.%v.%v", k1, k2)
 					}
 				}
 				switch inp.Type {
@@ -157,14 +164,42 @@ func main() {
 					if y[inp.Name] == nil {
 						y[inp.Name] = c
 					} else {
-						//					    y2 := make(map[string]interface{})
-						y2 := y[inp.Name].(map[string]interface{})
-						for k, v := range c {
-							y2[k] = v
-						}
+						log.Fatalf("Namespace already exist's: %v", inp.Name)
 					}
 				default:
 					log.Fatalf("Unknown type in config inputs.%v.Type: %v", inp.Name, inp.Type)
+				}
+			}
+		}
+
+        if reflect.ValueOf(c["merge"]).Kind() == reflect.Map {
+            for k1, v1 := range c["merge"].(map[string]interface{}) {
+				var m Merge
+				m.Name = k1
+                for k2, v2 := range v1.(map[string]interface{}) {
+                    switch k2 {
+					case "name":
+						m.Name = v2.(string)
+					case "inputs":
+						m.Inputs = v2.([]interface{})
+					default:
+						log.Fatalf("Invalid key in configuration file merge.%v.%v", k1, k2)
+					}
+				}
+
+				for i := range m.Inputs {
+	                if y[m.Name] == nil {
+						y2 := make(map[string]interface{})
+                        for k, v := range y[m.Inputs[i].(string)].(map[string]interface{}) {
+			                y2[k] = v
+						}
+						y[m.Name] = y2
+					} else {
+						y2 := y[m.Name].(map[string]interface{})
+		                for k, v := range y[m.Inputs[i].(string)].(map[string]interface{}) {
+			                y2[k] = v
+		                }
+					}
 				}
 			}
 		}

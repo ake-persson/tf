@@ -1,6 +1,3 @@
-[input]
-order = ["example"]
-
 [inputs.Example]
 type = "file"
 path = "examples/example.yaml"
@@ -9,12 +6,5 @@ path = "examples/example.yaml"
 type = "file"
 path = "examples/example2.toml"
 
-[inputs.Subst1]
-name = "Subst"
-type = "file"
-path = "examples/example.yaml"
-
-[inputs.Subst2]
-name = "Subst"
-type = "file"
-path = "examples/example2.toml"
+[merge.Merged]
+inputs = [ "Example", "Example2" ]
