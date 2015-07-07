@@ -88,110 +88,133 @@ func main() {
 		Owner      string `short:"O" long:"owner" description:"File Owner"`
 		EtcdNode   string `short:"n" long:"etcd-node" description:"Etcd Node"`
 		EtcdPort   int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
-		EtcdKey    string `short:"k" long:"etcd-key" description:"Etcd Key" default:"/"`
+		EtcdDir    string `short:"k" long:"etcd-dir" description:"Etcd Dir" default:"/"`
 	}
 
 	// Parse options
-	_, err := flags.Parse(&opts)
-	if err != nil {
+	if _, err := flags.Parse(&opts); err != nil {
 		ferr := err.(*flags.Error)
 		if ferr.Type == flags.ErrHelp {
-			os.Exit(1)
+			os.Exit(0)
+		} else {
+			log.Fatal(err.Error())
 		}
 	}
-	check(err)
 
 	// Print version
-	if opts.Version == true {
-		fmt.Println(version)
+	if opts.Version {
+		fmt.Printf("tf %s\n", version)
 		os.Exit(0)
 	}
 
-    // Get environment
-	y := make(map[string]interface{})
-	y["Env"] = GetOSEnv()
+	// Get environment
+	data := make(map[string]interface{})
+	data["Env"] = GetOSEnv()
 
 	// Get argument input
 	if opts.Input != "" {
-		var df DataFmt
+		var f DataFmt
 		switch opts.InpFormat {
 		case "YAML":
-			df = YAML
+			f = YAML
 		case "TOML":
-			df = TOML
+			f = TOML
 		case "JSON":
-			df = JSON
+			f = JSON
 		default:
 			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 		}
 
-		// Re-using err, define global err?
-		y["Arg"], err = UnmarshalData([]byte(opts.Input), df)
-		check(err)
+		var err error
+		data["Arg"], err = UnmarshalData([]byte(opts.Input), f)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-		// Copy Arg namespace to root for convenience
-        for k, v := range y["Arg"].(map[string]interface{}) {
-			y[k] = v
+		// Copy .Arg namespace to . for convenience
+		for k, v := range data["Arg"].(map[string]interface{}) {
+			data[k] = v
 		}
 	}
 
 	// Get file input
 	if opts.InpFile != "" {
-		y["File"], err = LoadFile(opts.InpFile, y)
-		check(err)
+		var err error
+		data["File"], err = LoadFile(opts.InpFile, data)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
+     if opts.EtcdNode != "" {
+// Add error handling
+        node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
+        client := etcd.NewClient(node)
+        res, _ := client.Get(opts.EtcdDir, true, true)
+        data["Etcd"] = EtcdMap(res.Node)
+    }
 
 	// Load config file
 	if opts.Config != "" {
-		c, err := LoadFile(opts.Config, y)
-		check(err)
-		y["Cfg"] = c
+		cfg, err := LoadFile(opts.Config, data)
+		data["Cfg"] = cfg
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-		if reflect.ValueOf(c["inputs"]).Kind() == reflect.Map {
-			for k1, v1 := range c["inputs"].(map[string]interface{}) {
-				var inp Input
-				inp.Name = k1
-				for k2, v2 := range v1.(map[string]interface{}) {
-					switch k2 {
-					case "name":
-						inp.Name = v2.(string)
-					case "type":
-						inp.Type = v2.(string)
-					case "path":
-						inp.Path = v2.(string)
-					case "etcd_node":
-						inp.EtcdNode = v2.(string)
-					case "etcd_port":
-						inp.EtcdPort = v2.(int64)
-					case "etcd_dir":
-						inp.EtcdDir = v2.(string)
-					default:
-						log.Fatalf("Invalid key in configuration file inputs.%v.%v", k1, k2)
-					}
-				}
-				switch inp.Type {
-				case "file":
-					c, err := LoadFile(inp.Path, y)
-					check(err)
-					if y[inp.Name] == nil {
-						y[inp.Name] = c
-					} else {
-						log.Fatalf("Namespace already exist's: %v", inp.Name)
-					}
-				case "etcd":
-					node := []string{fmt.Sprintf("http://%v:%v", inp.EtcdNode, inp.EtcdPort)}
-					client := etcd.NewClient(node)
-					res, _ := client.Get(inp.EtcdDir, true, true)
-					e := EtcdMap(res.Node)
-					y[inp.Name] = e
+		if cfg["inputs"] == nil {
+			log.Fatal("No inputs specified in configuration file")
+		}
+
+		if reflect.ValueOf(cfg["inputs"]).Kind() != reflect.Map {
+			log.Fatal("Incorrect definition of inputs, it needs to be a map of values")
+		}
+
+		for k1, v1 := range cfg["inputs"].(map[string]interface{}) {
+			var i Input
+			i.Name = k1
+			for k2, v2 := range v1.(map[string]interface{}) {
+				switch k2 {
+				case "name":
+					i.Name = v2.(string)
+				case "type":
+					i.Type = v2.(string)
+				case "path":
+					i.Path = v2.(string)
+				case "etcd_node":
+					i.EtcdNode = v2.(string)
+				case "etcd_port":
+					i.EtcdPort = v2.(int64)
+				case "etcd_dir":
+					i.EtcdDir = v2.(string)
 				default:
-					log.Fatalf("Unknown type in config inputs.%v.Type: %v", inp.Name, inp.Type)
+					log.Fatalf("Invalid key in configuration file input.%v.%v", k1, k2)
 				}
+			}
+// Check req. entries
+// Add defaults for Etcd
+			switch i.Type {
+			case "file":
+				if data[i.Name] != nil {
+                    log.Fatalf("Input name already exist's: %s", i.Name)
+				}
+				var err error
+				data[i.Name], err = LoadFile(i.Path, data)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
+			case "etcd":
+// Add error handling
+				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdNode, i.EtcdPort)}
+				client := etcd.NewClient(node)
+				res, _ := client.Get(i.EtcdDir, true, true)
+				data[i.Name] = EtcdMap(res.Node)
+			default:
+				log.Fatalf("Unknown type in configuration file .%v.Type: %v", i.Name, i.Type)
 			}
 		}
 
-		if reflect.ValueOf(c["merge"]).Kind() == reflect.Map {
-			for k1, v1 := range c["merge"].(map[string]interface{}) {
+		if reflect.ValueOf(cfg["merge"]).Kind() == reflect.Map {
+			for k1, v1 := range cfg["merge"].(map[string]interface{}) {
 				var m Merge
 				m.Name = k1
 				for k2, v2 := range v1.(map[string]interface{}) {
@@ -206,16 +229,16 @@ func main() {
 				}
 
 				for i := range m.Inputs {
-					if y[m.Name] == nil {
-						y2 := make(map[string]interface{})
-						for k, v := range y[m.Inputs[i].(string)].(map[string]interface{}) {
-							y2[k] = v
+					if data[m.Name] == nil {
+						data2 := make(map[string]interface{})
+						for k, v := range data[m.Inputs[i].(string)].(map[string]interface{}) {
+							data2[k] = v
 						}
-						y[m.Name] = y2
+						data[m.Name] = data2
 					} else {
-						y2 := y[m.Name].(map[string]interface{})
-						for k, v := range y[m.Inputs[i].(string)].(map[string]interface{}) {
-							y2[k] = v
+						data2 := data[m.Name].(map[string]interface{})
+						for k, v := range data[m.Inputs[i].(string)].(map[string]interface{}) {
+							data2[k] = v
 						}
 					}
 				}
@@ -223,16 +246,9 @@ func main() {
 		}
 	}
 
-	if opts.EtcdNode != "" {
-		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
-		client := etcd.NewClient(node)
-		res, _ := client.Get(opts.EtcdKey, true, true)
-		e := EtcdMap(res.Node)
-		y["Etcd"] = e
-	}
-
+	// If verbose print data structure as YAML
 	if opts.Verbose {
-		s, _ := yaml.Marshal(&y)
+		s, _ := yaml.Marshal(&data)
 		fmt.Printf("%s\n", string(s))
 	}
 
@@ -260,7 +276,7 @@ func main() {
 	t := template.Must(template.New("template").Funcs(fns).Parse(templ))
 
 	buf := new(bytes.Buffer)
-	err = t.Execute(buf, y)
+	err := t.Execute(buf, data)
 	check(err)
 
 	// Write result

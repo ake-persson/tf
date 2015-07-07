@@ -2,10 +2,9 @@ package main
 
 import (
 	"bytes"
-	"fmt"
-	"text/template"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/BurntSushi/toml"
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -13,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 // Data format represents which data serialization is used YAML, JSON or TOML.
@@ -86,14 +86,14 @@ func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, e
 	}
 
 	log.Infof("Template input file: %s", fn)
-    t := template.Must(template.New("template").Funcs(fns).Parse(string(c)))
-    
-    buf := new(bytes.Buffer)
-    err = t.Execute(buf, data)
+	t := template.Must(template.New("template").Funcs(fns).Parse(string(c)))
+
+	buf := new(bytes.Buffer)
+	err = t.Execute(buf, data)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	fmt.Printf("%s\n", string(buf.Bytes()))
 
 	v, err2 := UnmarshalData(buf.Bytes(), df)
