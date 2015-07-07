@@ -168,9 +168,9 @@ func main() {
 
 	// Get http input
 	if opts.HttpUrl != "" {
-        var f DataFmt
-        switch opts.HttpFormat {
-        case "YAML":
+		var f DataFmt
+		switch opts.HttpFormat {
+		case "YAML":
 			f = YAML
 		case "TOML":
 			f = TOML
