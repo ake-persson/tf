@@ -67,12 +67,12 @@ type Merge struct {
 }
 
 func main() {
-	// get the FileInfo struct describing the standard input.
+	// Get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
 
 	// Set log options
 	log.SetOutput(os.Stderr)
-	log.SetLevel(log.InfoLevel)
+	log.SetLevel(log.WarnLevel)
 
 	// Options
 	var opts struct {
@@ -105,6 +105,11 @@ func main() {
 	if opts.Version {
 		fmt.Printf("tf %s\n", version)
 		os.Exit(0)
+	}
+
+	// Set verbose
+	if opts.Verbose {
+		log.SetLevel(log.InfoLevel)
 	}
 
 	// Get environment
@@ -145,13 +150,13 @@ func main() {
 			log.Fatal(err.Error())
 		}
 	}
-     if opts.EtcdNode != "" {
-// Add error handling
-        node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
-        client := etcd.NewClient(node)
-        res, _ := client.Get(opts.EtcdDir, true, true)
-        data["Etcd"] = EtcdMap(res.Node)
-    }
+	if opts.EtcdNode != "" {
+		// Add error handling
+		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
+		client := etcd.NewClient(node)
+		res, _ := client.Get(opts.EtcdDir, true, true)
+		data["Etcd"] = EtcdMap(res.Node)
+	}
 
 	// Load config file
 	if opts.Config != "" {
@@ -190,12 +195,12 @@ func main() {
 					log.Fatalf("Invalid key in configuration file input.%v.%v", k1, k2)
 				}
 			}
-// Check req. entries
-// Add defaults for Etcd
+			// Check req. entries
+			// Add defaults for Etcd
 			switch i.Type {
 			case "file":
 				if data[i.Name] != nil {
-                    log.Fatalf("Input name already exist's: %s", i.Name)
+					log.Fatalf("Input name already exist's: %s", i.Name)
 				}
 				var err error
 				data[i.Name], err = LoadFile(i.Path, data)
@@ -203,7 +208,7 @@ func main() {
 					log.Fatal(err.Error())
 				}
 			case "etcd":
-// Add error handling
+				// Add error handling
 				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdNode, i.EtcdPort)}
 				client := etcd.NewClient(node)
 				res, _ := client.Get(i.EtcdDir, true, true)

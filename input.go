@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
+//	"fmt"
 	"github.com/BurntSushi/toml"
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -26,10 +26,10 @@ const (
 )
 
 // Unmarshal YAML/JSON/TOML serialized data.
-func UnmarshalData(cont []byte, df DataFmt) (map[string]interface{}, error) {
+func UnmarshalData(cont []byte, f DataFmt) (map[string]interface{}, error) {
 	v := make(map[string]interface{})
 
-	switch df {
+	switch f {
 	case YAML:
 		log.Info("Unmarshaling YAML data")
 		err := yaml.Unmarshal(cont, &v)
@@ -58,15 +58,15 @@ func UnmarshalData(cont []byte, df DataFmt) (map[string]interface{}, error) {
 
 // Load file with serialized data.
 func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, error) {
-	var df DataFmt
+	var f DataFmt
 
 	switch filepath.Ext(fn) {
 	case ".yaml":
-		df = YAML
+		f = YAML
 	case ".json":
-		df = JSON
+		f = JSON
 	case ".toml":
-		df = TOML
+		f = TOML
 	default:
 		log.Error("Unsupported data format, needs to be .yaml, .json or .toml")
 		return nil, errors.New("Unsupported data format")
@@ -94,9 +94,9 @@ func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, e
 		return nil, err
 	}
 
-	fmt.Printf("%s\n", string(buf.Bytes()))
+//	fmt.Printf("%s\n", string(buf.Bytes()))
 
-	v, err2 := UnmarshalData(buf.Bytes(), df)
+	v, err2 := UnmarshalData(buf.Bytes(), f)
 	if err2 != nil {
 		return nil, err2
 	}
