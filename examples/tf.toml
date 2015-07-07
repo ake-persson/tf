@@ -18,5 +18,11 @@ etcd_node = "etcd1"
 etcd_port = 5001
 etcd_dir = "/subnet"
 
+[inputs.Host]
+type = "etcd"
+etcd_node = "etcd1"
+etcd_port = 5001
+etcd_dir = "/host/{{.Host}}"
+
 [merge.Config]
 inputs = [ "Global", "Subnet" ]

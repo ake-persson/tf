@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
+	"text/template"
 	"encoding/json"
 	"errors"
 	"github.com/BurntSushi/toml"
@@ -23,10 +26,10 @@ const (
 )
 
 // Unmarshal YAML/JSON/TOML serialized data.
-func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
+func UnmarshalData(cont []byte, df DataFmt) (map[string]interface{}, error) {
 	v := make(map[string]interface{})
 
-	switch fmt {
+	switch df {
 	case YAML:
 		log.Info("Unmarshaling YAML data")
 		err := yaml.Unmarshal(cont, &v)
@@ -54,16 +57,16 @@ func UnmarshalData(cont []byte, fmt DataFmt) (map[string]interface{}, error) {
 }
 
 // Load file with serialized data.
-func LoadFile(fn string) (map[string]interface{}, error) {
-	var fmt DataFmt
+func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, error) {
+	var df DataFmt
 
 	switch filepath.Ext(fn) {
 	case ".yaml":
-		fmt = YAML
+		df = YAML
 	case ".json":
-		fmt = JSON
+		df = JSON
 	case ".toml":
-		fmt = TOML
+		df = TOML
 	default:
 		log.Error("Unsupported data format, needs to be .yaml, .json or .toml")
 		return nil, errors.New("Unsupported data format")
@@ -82,7 +85,18 @@ func LoadFile(fn string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	v, err2 := UnmarshalData(c, fmt)
+	log.Infof("Template input file: %s", fn)
+    t := template.Must(template.New("template").Funcs(fns).Parse(string(c)))
+    
+    buf := new(bytes.Buffer)
+    err = t.Execute(buf, data)
+	if err != nil {
+		return nil, err
+	}
+	
+	fmt.Printf("%s\n", string(buf.Bytes()))
+
+	v, err2 := UnmarshalData(buf.Bytes(), df)
 	if err2 != nil {
 		return nil, err2
 	}

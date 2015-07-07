@@ -53,9 +53,9 @@ var fns = template.FuncMap{
 }
 
 type Input struct {
-	Name string
-	Type string
-	Path string
+	Name     string
+	Type     string
+	Path     string
 	EtcdNode string
 	EtcdPort int64
 	EtcdDir  string
@@ -107,40 +107,43 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Get argument input
+    // Get environment
 	y := make(map[string]interface{})
+	y["Env"] = GetOSEnv()
+
+	// Get argument input
 	if opts.Input != "" {
-		var fmt DataFmt
+		var df DataFmt
 		switch opts.InpFormat {
 		case "YAML":
-			fmt = YAML
+			df = YAML
 		case "TOML":
-			fmt = TOML
+			df = TOML
 		case "JSON":
-			fmt = JSON
+			df = JSON
 		default:
 			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 		}
-		v, err := UnmarshalData([]byte(opts.Input), fmt)
+
+		// Re-using err, define global err?
+		y["Arg"], err = UnmarshalData([]byte(opts.Input), df)
 		check(err)
-		y = v
-		y["Arg"] = v
+
+		// Copy Arg namespace to root for convenience
+        for k, v := range y["Arg"].(map[string]interface{}) {
+			y[k] = v
+		}
 	}
 
 	// Get file input
 	if opts.InpFile != "" {
-		v, err := LoadFile(opts.InpFile)
+		y["File"], err = LoadFile(opts.InpFile, y)
 		check(err)
-		y["File"] = v
 	}
-
-	// Get environment
-	env := GetOSEnv()
-	y["Env"] = env
 
 	// Load config file
 	if opts.Config != "" {
-		c, err := LoadFile(opts.Config)
+		c, err := LoadFile(opts.Config, y)
 		check(err)
 		y["Cfg"] = c
 
@@ -168,7 +171,7 @@ func main() {
 				}
 				switch inp.Type {
 				case "file":
-					c, err := LoadFile(inp.Path)
+					c, err := LoadFile(inp.Path, y)
 					check(err)
 					if y[inp.Name] == nil {
 						y[inp.Name] = c
