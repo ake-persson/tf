@@ -53,15 +53,15 @@ var fns = template.FuncMap{
 }
 
 type Input struct {
-	Name     string
-	Type     string
-	Path     string
-	EtcdNode string
-	EtcdPort int64
-	EtcdDir  string
-	HttpUrl  string
+	Name       string
+	Type       string
+	Path       string
+	EtcdNode   string
+	EtcdPort   int64
+	EtcdDir    string
+	HttpUrl    string
 	HttpHeader string
-	HttpFormat   string
+	HttpFormat string
 }
 
 type Merge struct {

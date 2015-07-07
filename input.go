@@ -125,7 +125,7 @@ func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, erro
 		return nil, err
 	}
 
-    h := strings.Split(header, ":")
+	h := strings.Split(header, ":")
 
 	req.Header.Add(h[0], h[1])
 
@@ -134,12 +134,12 @@ func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, erro
 		return nil, err
 	}
 
-/*
-	r, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-*/
+	/*
+		r, err := http.Get(url)
+		if err != nil {
+			return nil, err
+		}
+	*/
 
 	defer r.Body.Close()
 	body, err2 := ioutil.ReadAll(r.Body)
