@@ -1,29 +1,31 @@
-[inputs.Example]
-type = "file"
-path = "examples/example.yaml"
+#[etcd]
+#etcd_node = "etcd1"
+#etcd_node = 5001
 
-[inputs.Example2]
-type = "file"
-path = "examples/example2.toml"
+#[inputs.Example]
+#type = "file"
+#path = "examples/example.yaml"
 
-[inputs.Global]
-type = "etcd"
-etcd_node = "etcd1"
-etcd_port = 5001
-etcd_dir = "/global"
+#[inputs.Example2]
+#type = "file"
+#path = "examples/example2.toml"
 
-[inputs.Subnet]
-type = "etcd"
-etcd_node = "etcd1"
-etcd_port = 5001
-etcd_dir = "/subnet"
+#[inputs.Global]
+#type = "etcd"
+#etcd_dir = "/global"
 
-[inputs.Host]
-type = "etcd"
-etcd_node = "etcd1"
-etcd_port = 5001
-#etcd_dir = "/host"
-etcd_dir = "/host/{{.host}}"
+#[inputs.Subnet]
+#type = "etcd"
+#etcd_dir = "/subnet"
 
-[merge.Config]
-inputs = [ "Global", "Subnet" ]
+#[inputs.Host]
+#type = "etcd"
+#etcd_dir = "/host/{{.host}}"
+
+[inputs.Peekaboo]
+type = "http"
+format = "JSON"
+http_url = "http://iseeyou:5050/status/json"
+
+#[merge.Config]
+#inputs = [ "Global", "Subnet" ]

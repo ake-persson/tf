@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"net/http"
 )
 
 // Data format represents which data serialization is used YAML, JSON or TOML.
@@ -114,4 +115,24 @@ func GetOSEnv() map[string]interface{} {
 	}
 
 	return v
+}
+
+func GetHTTP(url string, f DataFmt) (map[string]interface{}, error) {
+	r, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer r.Body.Close()
+	body, err2 := ioutil.ReadAll(r.Body)
+	if err2 != nil {
+		return nil, err2
+	}
+	
+	v, err := UnmarshalData(body, f)
+	if err != nil {
+		return nil, err
+	}
+	
+	return v, nil
 }

@@ -59,6 +59,8 @@ type Input struct {
 	EtcdNode string
 	EtcdPort int64
 	EtcdDir  string
+	HTTPUrl	string
+	Format string
 }
 
 type Merge struct {
@@ -193,6 +195,10 @@ func main() {
 					i.EtcdPort = v2.(int64)
 				case "etcd_dir":
 					i.EtcdDir = v2.(string)
+				case "http_url":
+					i.HTTPUrl = v2.(string)
+				case "format":
+					i.Format = v2.(string)
 				default:
 					log.Fatalf("Invalid key in configuration file input.%v.%v", k1, k2)
 				}
@@ -215,6 +221,24 @@ func main() {
 				client := etcd.NewClient(node)
 				res, _ := client.Get(i.EtcdDir, true, true)
 				data[i.Name] = EtcdMap(res.Node)
+			case "http":
+				var f DataFmt
+				switch i.Format {
+				case "YAML":
+					f = YAML
+				case "TOML":
+					f = TOML
+				case "JSON":
+					f = JSON
+				default:
+					log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
+				}
+
+				var err error
+				data[i.Name], err = GetHTTP(i.HTTPUrl, f)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
 			default:
 				log.Fatalf("Unknown type in configuration file .%v.Type: %v", i.Name, i.Type)
 			}

@@ -167,5 +167,5 @@ Currently Go text/template doesn't have a way to [suppress newlines](https://git
 - Add sort array asc. and desc. templ. func.
 - Defaults in Config for like Etcd
 - Examples with data Etcd
-- Better error handling and confg/argument validation
+- Better error handling and config/argument validation
 - Validation of data input using schema
