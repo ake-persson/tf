@@ -163,7 +163,7 @@ Currently Go text/template doesn't have a way to [suppress newlines](https://git
 
 # Roadmap
 
-- REST query support
+- MySQL support
 - Add sort array asc. and desc. templ. func.
 - Defaults in Config for like Etcd
 - Examples with data Etcd
