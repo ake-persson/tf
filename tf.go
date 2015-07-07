@@ -93,7 +93,7 @@ func main() {
 		EtcdPort   int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
 		EtcdDir    string `short:"k" long:"etcd-dir" description:"Etcd Dir" default:"/"`
 		HttpUrl    string `short:"u" long:"http-url" description:"HTTP Url"`
-		HttpHeader string `short:"h" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
+		HttpHeader string `short:"H" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
 		HttpFormat string `long:"http-format" description:"HTTP Format" default:"JSON"`
 	}
 
@@ -164,6 +164,27 @@ func main() {
 		client := etcd.NewClient(node)
 		res, _ := client.Get(opts.EtcdDir, true, true)
 		data["Etcd"] = EtcdMap(res.Node)
+	}
+
+	// Get http input
+	if opts.HttpUrl != "" {
+        var f DataFmt
+        switch opts.HttpFormat {
+        case "YAML":
+			f = YAML
+		case "TOML":
+			f = TOML
+		case "JSON":
+			f = JSON
+		default:
+			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
+		}
+
+		var err error
+		data["Http"], err = GetHTTP(opts.HttpUrl, opts.HttpHeader, f)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 
 	// Load config file
