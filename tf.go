@@ -59,8 +59,9 @@ type Input struct {
 	EtcdNode string
 	EtcdPort int64
 	EtcdDir  string
-	HTTPUrl	string
-	Format string
+	HttpUrl  string
+	HttpHeader string
+	HttpFormat   string
 }
 
 type Merge struct {
@@ -91,6 +92,9 @@ func main() {
 		EtcdNode   string `short:"n" long:"etcd-node" description:"Etcd Node"`
 		EtcdPort   int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
 		EtcdDir    string `short:"k" long:"etcd-dir" description:"Etcd Dir" default:"/"`
+		HttpUrl    string `short:"u" long:"http-url" description:"HTTP Url"`
+		HttpHeader string `short:"h" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
+		HttpFormat string `long:"http-format" description:"HTTP Format" default:"JSON"`
 	}
 
 	// Parse options
@@ -196,9 +200,11 @@ func main() {
 				case "etcd_dir":
 					i.EtcdDir = v2.(string)
 				case "http_url":
-					i.HTTPUrl = v2.(string)
-				case "format":
-					i.Format = v2.(string)
+					i.HttpUrl = v2.(string)
+				case "http_header":
+					i.HttpHeader = v2.(string)
+				case "http_format":
+					i.HttpFormat = v2.(string)
 				default:
 					log.Fatalf("Invalid key in configuration file input.%v.%v", k1, k2)
 				}
@@ -223,7 +229,7 @@ func main() {
 				data[i.Name] = EtcdMap(res.Node)
 			case "http":
 				var f DataFmt
-				switch i.Format {
+				switch i.HttpFormat {
 				case "YAML":
 					f = YAML
 				case "TOML":
@@ -235,7 +241,7 @@ func main() {
 				}
 
 				var err error
-				data[i.Name], err = GetHTTP(i.HTTPUrl, f)
+				data[i.Name], err = GetHTTP(i.HttpUrl, i.HttpHeader, f)
 				if err != nil {
 					log.Fatal(err.Error())
 				}

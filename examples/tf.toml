@@ -24,8 +24,9 @@
 
 [inputs.Peekaboo]
 type = "http"
-format = "JSON"
-http_url = "http://iseeyou:5050/status/json"
+http_format = "YAML"
+http_url = "http://iseeyou:5050/status/tree"
+http_header = "Accept: application/x-yaml"
 
 #[merge.Config]
 #inputs = [ "Global", "Subnet" ]

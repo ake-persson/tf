@@ -9,11 +9,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
-	"net/http"
 )
 
 // Data format represents which data serialization is used YAML, JSON or TOML.
@@ -117,22 +117,40 @@ func GetOSEnv() map[string]interface{} {
 	return v
 }
 
-func GetHTTP(url string, f DataFmt) (map[string]interface{}, error) {
+// Request HTTP url.
+func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+    h := strings.Split(header, ":")
+
+	req.Header.Add(h[0], h[1])
+
+	r, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+/*
 	r, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
+*/
 
 	defer r.Body.Close()
 	body, err2 := ioutil.ReadAll(r.Body)
 	if err2 != nil {
 		return nil, err2
 	}
-	
+
 	v, err := UnmarshalData(body, f)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return v, nil
 }
