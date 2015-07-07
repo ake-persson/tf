@@ -112,7 +112,7 @@ func main() {
 		log.SetLevel(log.InfoLevel)
 	}
 
-	// Get environment
+	// Get environment variables
 	data := make(map[string]interface{})
 	data["Env"] = GetOSEnv()
 
@@ -150,6 +150,8 @@ func main() {
 			log.Fatal(err.Error())
 		}
 	}
+
+	// Get Etcd input
 	if opts.EtcdNode != "" {
 		// Add error handling
 		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
@@ -254,7 +256,7 @@ func main() {
 	// If verbose print data structure as YAML
 	if opts.Verbose {
 		s, _ := yaml.Marshal(&data)
-		fmt.Printf("%s\n", string(s))
+		fmt.Printf("=== Input Data ===\n%s\n", string(s))
 	}
 
 	// Template input

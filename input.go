@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-//	"fmt"
+	//	"fmt"
 	"github.com/BurntSushi/toml"
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -94,7 +94,7 @@ func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, e
 		return nil, err
 	}
 
-//	fmt.Printf("%s\n", string(buf.Bytes()))
+	//	fmt.Printf("%s\n", string(buf.Bytes()))
 
 	v, err2 := UnmarshalData(buf.Bytes(), f)
 	if err2 != nil {
