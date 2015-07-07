@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	//	"fmt"
 	"github.com/BurntSushi/toml"
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -14,6 +13,9 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	"fmt"
 )
 
 // Data format represents which data serialization is used YAML, JSON or TOML.
@@ -134,13 +136,6 @@ func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, erro
 		return nil, err
 	}
 
-	/*
-		r, err := http.Get(url)
-		if err != nil {
-			return nil, err
-		}
-	*/
-
 	defer r.Body.Close()
 	body, err2 := ioutil.ReadAll(r.Body)
 	if err2 != nil {
@@ -153,4 +148,14 @@ func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, erro
 	}
 
 	return v, nil
+}
+
+func GetMySQL(user string, pass string, host string, port int64, db string, qry string) (map[string]interface{}, error) {
+	db2, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, db))
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	defer db2.Close()
+
+	return nil, nil
 }
