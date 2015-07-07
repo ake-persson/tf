@@ -256,7 +256,7 @@ func main() {
 	// If verbose print data structure as YAML
 	if opts.Verbose {
 		s, _ := yaml.Marshal(&data)
-		fmt.Printf("=== Input Data ===\n%s\n", string(s))
+		log.Printf("Input data\n%s", string(s))
 	}
 
 	// Template input
