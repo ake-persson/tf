@@ -62,12 +62,12 @@ type Input struct {
 	HttpUrl    string
 	HttpHeader string
 	HttpFormat string
-    MysqlUser string
-    MysqlPass string
-    MysqlHost string
-    MysqlPort int64
-    MysqlDb string
-    MysqlQry string
+	MysqlUser  string
+	MysqlPass  string
+	MysqlHost  string
+	MysqlPort  int64
+	MysqlDb    string
+	MysqlQry   string
 }
 
 type Merge struct {
@@ -101,12 +101,12 @@ func main() {
 		HttpUrl    string `short:"u" long:"http-url" description:"HTTP Url"`
 		HttpHeader string `short:"H" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
 		HttpFormat string `long:"http-format" description:"HTTP Format" default:"JSON"`
-		MysqlUser string `long:"mysql-user" description:"MySql user"`
-		MysqlPass string `long:"mysql-pass" description:"MySQL password"`
-		MysqlHost string `long:"mysql-host" description:"MySQL host"`
-		MysqlPort int64 `long:"mysql-port" description:"MySQL port" default:"3306"`
-		MysqlDb string `long:"mysql-db" description:"MySQL database"`
-		MysqlQry string `long:"mysql-query" description:"MySQL query"`
+		MysqlUser  string `long:"mysql-user" description:"MySql user"`
+		MysqlPass  string `long:"mysql-pass" description:"MySQL password"`
+		MysqlHost  string `long:"mysql-host" description:"MySQL host"`
+		MysqlPort  int64  `long:"mysql-port" description:"MySQL port" default:"3306"`
+		MysqlDb    string `long:"mysql-db" description:"MySQL database"`
+		MysqlQry   string `long:"mysql-query" description:"MySQL query"`
 	}
 
 	// Parse options
