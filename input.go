@@ -166,46 +166,46 @@ func GetMySQL(user string, pass string, host string, port int64, db string, qry 
 
 	log.Infof("Execute query: %s", qry)
 	rows, err := dbo.Query(qry)
-    if err != nil {
+	if err != nil {
 		return nil, err
-    }
+	}
 
 	log.Infof("Get result from query")
 	columns, err := rows.Columns()
-    if err != nil {
+	if err != nil {
 		return nil, err
-    }
+	}
 
 	var data []interface{}
 
-    values := make([]sql.RawBytes, len(columns))
-    scanArgs := make([]interface{}, len(values))
+	values := make([]sql.RawBytes, len(columns))
+	scanArgs := make([]interface{}, len(values))
 
-    for i := range values {
-        scanArgs[i] = &values[i]
-    }
+	for i := range values {
+		scanArgs[i] = &values[i]
+	}
 
-    for rows.Next() {
-        err = rows.Scan(scanArgs...)
-        if err != nil {
+	for rows.Next() {
+		err = rows.Scan(scanArgs...)
+		if err != nil {
 			return nil, err
-        }
+		}
 
-        var value string
+		var value string
 		res := make(map[string]interface{})
-        for i, col := range values {
-            if col == nil {
-                value = "NULL"
-            } else {
-                value = string(col)
-            }
+		for i, col := range values {
+			if col == nil {
+				value = "NULL"
+			} else {
+				value = string(col)
+			}
 			res[columns[i]] = value
-        }
+		}
 		data = append(data, res)
-    }
-    if err = rows.Err(); err != nil {
-        return nil, err
-    }
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return data, nil
 }
