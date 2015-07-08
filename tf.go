@@ -201,7 +201,8 @@ func main() {
 
 	// Get MySQL input
 	if opts.MysqlHost != "" {
-		_, err := GetMySQL(opts.MysqlUser, opts.MysqlPass, opts.MysqlHost, opts.MysqlPort, opts.MysqlDb, opts.MysqlQry)
+		var err error
+		data["Mysql"], err = GetMySQL(opts.MysqlUser, opts.MysqlPass, opts.MysqlHost, opts.MysqlPort, opts.MysqlDb, opts.MysqlQry)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
