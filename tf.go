@@ -247,6 +247,18 @@ func main() {
 					i.HttpHeader = v2.(string)
 				case "http_format":
 					i.HttpFormat = v2.(string)
+				case "mysql_user":
+					i.MysqlUser = v2.(string)
+				case "mysql_pass":
+					i.MysqlPass = v2.(string)
+				case "mysql_host":
+					i.MysqlHost = v2.(string)
+				case "mysql_port":
+					i.MysqlPort = v2.(int64)
+				case "mysql_db":
+					i.MysqlDb = v2.(string)
+				case "mysql_qry":
+					i.MysqlQry = v2.(string)
 				default:
 					log.Fatalf("Invalid key in configuration file input.%v.%v", k1, k2)
 				}
@@ -284,6 +296,12 @@ func main() {
 
 				var err error
 				data[i.Name], err = GetHTTP(i.HttpUrl, i.HttpHeader, f)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
+			case "mysql":
+				var err error
+				data["Mysql"], err = GetMySQL(i.MysqlUser, i.MysqlPass, i.MysqlHost, i.MysqlPort, i.MysqlDb, i.MysqlQry)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
