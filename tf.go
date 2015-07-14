@@ -225,67 +225,18 @@ func main() {
 		}
 
 		var defs CfgDefault
-        if cfg["defaults"] != nil {
+		if cfg["defaults"] != nil {
 			defs, err = GetDefaults(cfg["defaults"].(map[string]interface{}))
-			check(err)
-        }
-
-		for k1, v1 := range cfg["inputs"].(map[string]interface{}) {
-			i, err := GetInput(k1, v1.(map[string]interface{}), defs)
-			check(err)
-/*
-			for k2, v2 := range v1.(map[string]interface{}) {
-				switch k2 {
-				case "name":
-					s := v2.(string)
-					i.Name = &s
-				case "type":
-					s := v2.(string)
-					i.Type = &s
-				case "path":
-					s := v2.(string)
-					i.Path = &s
-				case "etcd_node":
-					s := v2.(string)
-					i.EtcdNode = &s
-				case "etcd_port":
-					n := v2.(int64)
-					i.EtcdPort = &n
-				case "etcd_dir":
-					s := v2.(string)
-					i.EtcdDir = &s
-				case "http_url":
-					s := v2.(string)
-					i.HttpUrl = &s
-				case "http_header":
-					s := v2.(string)
-					i.HttpHeader = &s
-				case "http_format":
-					s := v2.(string)
-					i.HttpFormat = &s
-				case "mysql_user":
-					s := v2.(string)
-					i.MysqlUser = &s
-				case "mysql_pass":
-					s := v2.(string)
-					i.MysqlPass = &s
-				case "mysql_host":
-					s := v2.(string)
-					i.MysqlHost = &s
-				case "mysql_port":
-					n := v2.(int64)
-					i.MysqlPort = &n
-				case "mysql_db":
-					s := v2.(string)
-					i.MysqlDb = &s
-				case "mysql_qry":
-					s := v2.(string)
-					i.MysqlQry = &s
-				default:
-					log.Fatalf("Invalid key in configuration file inputs.%v.%v", k1, k2)
-				}
+			if err != nil {
+				log.Fatal(err.Error())
 			}
-			*/
+		}
+
+		for k, v := range cfg["inputs"].(map[string]interface{}) {
+			i, err := GetInput(k, v.(map[string]interface{}), defs)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 
 			if data[*i.Name] != nil {
 				log.Fatalf("Input name already exist's: %s", i.Name)
