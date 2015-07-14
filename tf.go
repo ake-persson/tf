@@ -53,21 +53,21 @@ var fns = template.FuncMap{
 }
 
 type Input struct {
-	Name       string
-	Type       string
-	Path       string
-	EtcdNode   string
-	EtcdPort   int64
-	EtcdDir    string
-	HttpUrl    string
-	HttpHeader string
-	HttpFormat string
-	MysqlUser  string
-	MysqlPass  string
-	MysqlHost  string
-	MysqlPort  int64
-	MysqlDb    string
-	MysqlQry   string
+	Name       *string
+	Type       *string
+	Path       *string
+	EtcdNode   *string
+	EtcdPort   *int64
+	EtcdDir    *string
+	HttpUrl    *string
+	HttpHeader *string
+	HttpFormat *string
+	MysqlUser  *string
+	MysqlPass  *string
+	MysqlHost  *string
+	MysqlPort  *int64
+	MysqlDb    *string
+	MysqlQry   *string
 }
 
 type Merge struct {
@@ -226,64 +226,99 @@ func main() {
 
 		for k1, v1 := range cfg["inputs"].(map[string]interface{}) {
 			var i Input
-			i.Name = k1
+			i.Name = &k1
 			for k2, v2 := range v1.(map[string]interface{}) {
 				switch k2 {
 				case "name":
-					i.Name = v2.(string)
+					s := v2.(string)
+					i.Name = &s
 				case "type":
-					i.Type = v2.(string)
+					s := v2.(string)
+					i.Type = &s
 				case "path":
-					i.Path = v2.(string)
+					s := v2.(string)
+					i.Path = &s
 				case "etcd_node":
-					i.EtcdNode = v2.(string)
+					s := v2.(string)
+					i.EtcdNode = &s
 				case "etcd_port":
-					i.EtcdPort = v2.(int64)
+					n := v2.(int64)
+					i.EtcdPort = &n
 				case "etcd_dir":
-					i.EtcdDir = v2.(string)
+					s := v2.(string)
+					i.EtcdDir = &s
 				case "http_url":
-					i.HttpUrl = v2.(string)
+					s := v2.(string)
+					i.HttpUrl = &s
 				case "http_header":
-					i.HttpHeader = v2.(string)
+					s := v2.(string)
+					i.HttpHeader = &s
 				case "http_format":
-					i.HttpFormat = v2.(string)
+					s := v2.(string)
+					i.HttpFormat = &s
 				case "mysql_user":
-					i.MysqlUser = v2.(string)
+					s := v2.(string)
+					i.MysqlUser = &s
 				case "mysql_pass":
-					i.MysqlPass = v2.(string)
+					s := v2.(string)
+					i.MysqlPass = &s
 				case "mysql_host":
-					i.MysqlHost = v2.(string)
+					s := v2.(string)
+					i.MysqlHost = &s
 				case "mysql_port":
-					i.MysqlPort = v2.(int64)
+					n := v2.(int64)
+					i.MysqlPort = &n
 				case "mysql_db":
-					i.MysqlDb = v2.(string)
+					s := v2.(string)
+					i.MysqlDb = &s
 				case "mysql_qry":
-					i.MysqlQry = v2.(string)
+					s := v2.(string)
+					i.MysqlQry = &s
 				default:
-					log.Fatalf("Invalid key in configuration file input.%v.%v", k1, k2)
+					log.Fatalf("Invalid key in configuration file inputs.%v.%v", k1, k2)
 				}
 			}
-			// Check req. entries
-			// Add defaults for Etcd
-			switch i.Type {
+			// Defaults ...
+			switch *i.Type {
 			case "file":
-				if data[i.Name] != nil {
+				if i.Path == nil {
+					log.Fatalf("For input type \"file\" you need to specify \"path\"")
+				}
+				if data[*i.Name] != nil {
 					log.Fatalf("Input name already exist's: %s", i.Name)
 				}
+
 				var err error
-				data[i.Name], err = LoadFile(i.Path, data)
+				data[*i.Name], err = LoadFile(*i.Path, data)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
 			case "etcd":
+				if i.EtcdNode == nil {
+					log.Fatalf("For input type \"etcd\" you need to specify \"etcd_node\"")
+				}
+				if i.EtcdPort == nil {
+					log.Fatalf("For input type \"etcd\" you need to specify \"etcd_port\"")
+				}
+
 				// Add error handling
 				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdNode, i.EtcdPort)}
 				client := etcd.NewClient(node)
-				res, _ := client.Get(i.EtcdDir, true, true)
-				data[i.Name] = EtcdMap(res.Node)
+				res, _ := client.Get(*i.EtcdDir, true, true)
+				data[*i.Name] = EtcdMap(res.Node)
 			case "http":
+                if i.HttpUrl == nil {
+                    log.Fatalf("For input type \"http\" you need to specify \"http_url\"")
+                }
+                if i.HttpHeader == nil {
+                    log.Fatalf("For input type \"http\" you need to specify \"http_header\"")
+                }
+                if i.HttpFormat == nil {
+                    log.Fatalf("For input type \"http\" you need to specify \"http_format\"")
+                }
+
 				var f DataFmt
-				switch i.HttpFormat {
+				switch *i.HttpFormat {
 				case "YAML":
 					f = YAML
 				case "TOML":
@@ -295,18 +330,34 @@ func main() {
 				}
 
 				var err error
-				data[i.Name], err = GetHTTP(i.HttpUrl, i.HttpHeader, f)
+				data[*i.Name], err = GetHTTP(*i.HttpUrl, *i.HttpHeader, f)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
 			case "mysql":
+				if i.MysqlUser == nil {
+                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_user\"")
+				}
+                if i.MysqlPass == nil {
+                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_pass\"")
+                }
+                if i.MysqlHost == nil {
+                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_host\"")
+                }
+                if i.MysqlPort == nil {
+                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_port\"")
+                }
+                if i.MysqlQry == nil {
+                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_qry\"")
+                }
+
 				var err error
-				data["Mysql"], err = GetMySQL(i.MysqlUser, i.MysqlPass, i.MysqlHost, i.MysqlPort, i.MysqlDb, i.MysqlQry)
+				data["Mysql"], err = GetMySQL(*i.MysqlUser, *i.MysqlPass, *i.MysqlHost, *i.MysqlPort, *i.MysqlDb, *i.MysqlQry)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
 			default:
-				log.Fatalf("Unknown type in configuration file .%v.Type: %v", i.Name, i.Type)
+				log.Fatalf("Unknown type in configuration file .%v.Type: %v", *i.Name, *i.Type)
 			}
 		}
 
