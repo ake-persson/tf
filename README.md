@@ -21,7 +21,16 @@ Application Options:
   -O, --owner=         File Owner
   -n, --etcd-node=     Etcd Node
   -P, --etcd-port=     Etcd Port (2379)
-  -k, --etcd-key=      Etcd Key (/)
+  -k, --etcd-dir=      Etcd Dir (/)
+  -u, --http-url=      HTTP Url
+  -H, --http-header=   HTTP Header (Accept: application/json)
+      --http-format=   HTTP Format (JSON)
+      --mysql-user=    MySql user
+      --mysql-pass=    MySQL password
+      --mysql-host=    MySQL host
+      --mysql-port=    MySQL port (3306)
+      --mysql-db=      MySQL database
+      --mysql-query=   MySQL query
 
 Help Options:
   -h, --help           Show this help message
@@ -34,6 +43,104 @@ echo '{{keys .}} | tf
 ```
 
 Argument input will also be in the root scope for convenience.
+
+# Configuration file
+
+## Defaults
+
+**etcd_node**
+
+Default Etcd node.
+
+**etcd_port**
+
+Default Etcd port, will default to 2379 if not set.
+
+**http_header**
+
+HTTP accept header.
+
+**example:**
+```
+application/json
+```
+
+**http_format**
+
+Format used by the http response JSON, YAML or TOML.
+
+**mysql_user**
+
+Default MySQL user.
+
+**mysql_pass**
+
+Default MySQL password.
+
+**mysql_host**
+
+Default MySQL host.
+
+**mysql_port**
+
+Default MySql port, will default to 3306 if not set.
+
+**mysql_db**
+
+MySQL database.
+
+**Example:**
+
+```
+[defaults]
+mysql_user = "test"
+mysql_pass = "test"
+mysql_host = "mysql.example.com"
+mysql_port = 3306
+mysql_db = "test"
+```
+
+## Inputs
+
+### Type: file
+
+**name**
+
+**path**
+
+### Type: etcd
+
+**name**
+
+**etcd_node**
+
+**etcd_port**
+
+**etcd_dir**
+
+### Type: http
+
+**name**
+
+**http_url**
+
+*http_header**
+
+**http_format**
+
+### Type: mysql
+
+**mysql_user**
+
+**mysql_pass**
+
+**mysql_host**
+
+**mysql_port**
+
+**mysql_db**
+
+**mysql_qry**
 
 # Examples
 

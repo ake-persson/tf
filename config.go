@@ -35,6 +35,7 @@ type CfgInput struct {
 	MysqlQry   *string
 }
 
+// Get defaults from config file.
 func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 	var d CfgDefault
 	for k, v := range defs {
@@ -73,6 +74,7 @@ func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 	return d, nil
 }
 
+// Get input from configuration file.
 func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, error) {
 	var i CfgInput
 
