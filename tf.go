@@ -224,9 +224,16 @@ func main() {
 			log.Fatal("Incorrect definition of inputs, it needs to be a map of values")
 		}
 
+		var defs CfgDefault
+        if cfg["defaults"] != nil {
+			defs, err = GetDefaults(cfg["defaults"].(map[string]interface{}))
+			check(err)
+        }
+
 		for k1, v1 := range cfg["inputs"].(map[string]interface{}) {
-			var i Input
-			i.Name = &k1
+			i, err := GetInput(k1, v1.(map[string]interface{}), defs)
+			check(err)
+/*
 			for k2, v2 := range v1.(map[string]interface{}) {
 				switch k2 {
 				case "name":
@@ -278,45 +285,26 @@ func main() {
 					log.Fatalf("Invalid key in configuration file inputs.%v.%v", k1, k2)
 				}
 			}
-			// Defaults ...
+			*/
+
+			if data[*i.Name] != nil {
+				log.Fatalf("Input name already exist's: %s", i.Name)
+			}
+
 			switch *i.Type {
 			case "file":
-				if i.Path == nil {
-					log.Fatalf("For input type \"file\" you need to specify \"path\"")
-				}
-				if data[*i.Name] != nil {
-					log.Fatalf("Input name already exist's: %s", i.Name)
-				}
-
 				var err error
 				data[*i.Name], err = LoadFile(*i.Path, data)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
 			case "etcd":
-				if i.EtcdNode == nil {
-					log.Fatalf("For input type \"etcd\" you need to specify \"etcd_node\"")
-				}
-				if i.EtcdPort == nil {
-					log.Fatalf("For input type \"etcd\" you need to specify \"etcd_port\"")
-				}
-
 				// Add error handling
 				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdNode, i.EtcdPort)}
 				client := etcd.NewClient(node)
 				res, _ := client.Get(*i.EtcdDir, true, true)
 				data[*i.Name] = EtcdMap(res.Node)
 			case "http":
-                if i.HttpUrl == nil {
-                    log.Fatalf("For input type \"http\" you need to specify \"http_url\"")
-                }
-                if i.HttpHeader == nil {
-                    log.Fatalf("For input type \"http\" you need to specify \"http_header\"")
-                }
-                if i.HttpFormat == nil {
-                    log.Fatalf("For input type \"http\" you need to specify \"http_format\"")
-                }
-
 				var f DataFmt
 				switch *i.HttpFormat {
 				case "YAML":
@@ -335,22 +323,6 @@ func main() {
 					log.Fatal(err.Error())
 				}
 			case "mysql":
-				if i.MysqlUser == nil {
-                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_user\"")
-				}
-                if i.MysqlPass == nil {
-                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_pass\"")
-                }
-                if i.MysqlHost == nil {
-                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_host\"")
-                }
-                if i.MysqlPort == nil {
-                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_port\"")
-                }
-                if i.MysqlQry == nil {
-                    log.Fatalf("For input type \"mysql\" you need to specify \"mysql_qry\"")
-                }
-
 				var err error
 				data["Mysql"], err = GetMySQL(*i.MysqlUser, *i.MysqlPass, *i.MysqlHost, *i.MysqlPort, *i.MysqlDb, *i.MysqlQry)
 				if err != nil {
