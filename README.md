@@ -178,6 +178,7 @@ MySQL SQL query.
 
 ## Example
 
+**tf.toml**:
 ```
 [defaults]
 mysql_user = "test"
