@@ -176,6 +176,23 @@ MySQL database to connect to.
 
 MySQL SQL query.
 
+## Example
+
+```
+[defaults]
+mysql_user = "test"
+mysql_pass = "test"
+mysql_host = "mysql.example.com"
+mysql_db = "test"
+etcd_node = "etcd1.example.com"
+
+[inputs.MyTable]
+mysq_qry = "SELECT * FROM mytable"
+
+[inputs.EtcdDir]
+etcd_dir = "/mydir"
+```
+
 # Examples
 
 ```bash
