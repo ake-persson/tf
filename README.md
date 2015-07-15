@@ -46,6 +46,8 @@ Argument input will also be in the root scope for convenience.
 
 # Configuration file
 
+Configuration file is also a template i.e. you can use .Env and .Arg for customizing inputs.
+
 ## Defaults
 
 **etcd_node**
@@ -178,7 +180,7 @@ MySQL SQL query.
 
 ## Example
 
-**tf.toml**:
+**tf.toml**
 ```
 [defaults]
 mysql_user = "test"
@@ -187,19 +189,26 @@ mysql_host = "mysql.example.com"
 mysql_db = "test"
 etcd_node = "etcd1.example.com"
 
-[inputs.MyTable]
-mysq_qry = "SELECT * FROM mytable"
+[inputs.MySQLHost]
+mysql_qry = "SELECT host, location FROM hosts WHERE host LIKE '{{ .Arg.host }}'"
 
-[inputs.EtcdDir]
-etcd_dir = "/mydir"
+[inputs.EtcdHost]
+etcd_dir = "/hosts/{{ .host }}"
+
+[inputs.EtcdRegion]
+etcd_dir = "'/regions/{{ .region }}"
+```
+
+```
+tf -c tf.toml -i '{ host: myhost.example.com, region: emea }'
 ```
 
 # Examples
 
 ```bash
-./tf -f examples/example.yaml -t examples/example.conf.tf -o example.conf
-./tf -i '{region: amer, country: us}' -t examples/example.conf.tf
-./tf -i '{Apples: [1,2,3]}' -t examples/apples.tf
+tf -f examples/example.yaml -t examples/example.conf.tf -o example.conf
+tf -i '{region: amer, country: us}' -t examples/example.conf.tf
+tf -i '{Apples: [1,2,3]}' -t examples/apples.tf
 echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd-key /host
 ```
 
