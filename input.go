@@ -150,6 +150,7 @@ func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, erro
 	return v, nil
 }
 
+// Query MySQL.
 func GetMySQL(user string, pass string, host string, port int64, db string, qry string) ([]interface{}, error) {
 	log.Infof("Connecting to MySQL to database %s on host %s", host, db)
 	log.Infof("Connect DSN: %s:%s@tcp(%s:%v)/%s", user, "xxxxxxxx", host, port, db)

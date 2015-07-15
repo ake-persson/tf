@@ -83,12 +83,21 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 	}
 	if d.EtcdPort != nil {
 		i.EtcdPort = d.EtcdPort
+	} else {
+		n := int64(2379)
+		i.EtcdPort = &n
 	}
 	if d.HttpHeader != nil {
 		i.HttpHeader = d.HttpHeader
+	} else {
+		s := "Accept: application/json"
+		i.HttpHeader = &s
 	}
 	if d.HttpFormat != nil {
 		i.HttpFormat = d.HttpFormat
+	} else {
+		s := "JSON"
+		i.HttpFormat = &s
 	}
 	if d.MysqlUser != nil {
 		i.MysqlUser = d.MysqlUser
@@ -101,6 +110,9 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 	}
 	if d.MysqlPort != nil {
 		i.MysqlPort = d.MysqlPort
+	} else {
+		n := int64(3306)
+		i.MysqlPort = &n
 	}
 	if d.MysqlDb != nil {
 		i.MysqlDb = d.MysqlDb

@@ -102,45 +102,79 @@ mysql_db = "test"
 
 ## Inputs
 
+### Generic
+
+**name**
+
+Name of input in data namespace, this will override the name already given in the [inputs.<name>].
+
 ### Type: file
 
 **name**
 
+Name of input in data namespace, this will override the name already given in the [inputs.<name>].
+
 **path**
+
+Path to input file, format will be determined by file extension .yaml, .json or .toml.
 
 ### Type: etcd
 
 **name**
 
+Name of input in data namespace, this will override the name already given in the [inputs.<name>].
+
 **etcd_node**
+
+Etcd node to connect to.
 
 **etcd_port**
 
+Etcd port to connect to.
+
 **etcd_dir**
+
+Etcd directory to query, this will be queried recursively.
 
 ### Type: http
 
-**name**
-
 **http_url**
+
+HTTP url to request.
 
 *http_header**
 
+HTTP accept headers to use for request. Optional will default to JSON.
+
 **http_format**
+
+Format used by the http response JSON, YAML or TOML.
 
 ### Type: mysql
 
 **mysql_user**
 
+MySQL user for connection.
+
 **mysql_pass**
+
+MySQL password for connection.
 
 **mysql_host**
 
+MySQL host to connect to.
+
 **mysql_port**
+
+MySQL post to connect to.
 
 **mysql_db**
 
+MySQL database to connect to.
+
 **mysql_qry**
+
+MySQL SQL query.
 
 # Examples
 
