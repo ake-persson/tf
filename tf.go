@@ -275,7 +275,7 @@ func main() {
 				}
 			case "mysql":
 				var err error
-				data["Mysql"], err = GetMySQL(*i.MysqlUser, *i.MysqlPass, *i.MysqlHost, *i.MysqlPort, *i.MysqlDb, *i.MysqlQry)
+				data[*i.Name], err = GetMySQL(*i.MysqlUser, *i.MysqlPass, *i.MysqlHost, *i.MysqlPort, *i.MysqlDb, *i.MysqlQry)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
