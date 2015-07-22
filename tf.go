@@ -17,12 +17,6 @@ import (
 	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
 var fns = template.FuncMap{
 	"last":       IsLast,
 	"join":       Join,
@@ -337,7 +331,9 @@ func main() {
 
 		// Open file
 		c, err := ioutil.ReadFile(opts.TemplFile)
-		check(err)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 		templ = string(c)
 	} else {
 		log.Printf("No template specified using --template-file (-t) or piped to STDIN\n")
@@ -349,34 +345,50 @@ func main() {
 
 	buf := new(bytes.Buffer)
 	err := t.Execute(buf, data)
-	check(err)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	// Write result
 	if opts.OutpFile != "" {
 		p, err := strconv.ParseUint(opts.Permission, 8, 32)
-		check(err)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
 		w, err := os.Create(opts.OutpFile)
-		check(err)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
 		w.Chmod(os.FileMode(p))
 
 		if opts.Owner != "" {
 			u, err := user.Lookup(opts.Owner)
-			check(err)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 
 			uid, err := strconv.Atoi(u.Uid)
-			check(err)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 
 			gid, err := strconv.Atoi(u.Gid)
-			check(err)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 
 			err = w.Chown(uid, gid)
-			check(err)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 		}
 
 		_, err = w.Write(buf.Bytes())
-		check(err)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
 		w.Close()
 	} else {
