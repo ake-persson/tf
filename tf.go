@@ -25,13 +25,12 @@ func check(e error) {
 
 var fns = template.FuncMap{
 	"last":       IsLast,
-	"islast":     IsLast,
 	"join":       Join,
 	"split":      Split,
 	"repeat":     Repeat,
 	"keys":       Keys,
 	"type":       Type,
-	"ismap":      IsMap,
+	"map":        IsMap,
 	"upper":      strings.ToUpper,
 	"lower":      strings.ToLower,
 	"contains":   strings.Contains,
@@ -97,13 +96,13 @@ func main() {
 		OutpFile      string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
 		Permission    string `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
 		Owner         string `short:"O" long:"owner" description:"File Owner"`
-		EtcdHost      string `short:"n" long:"etcd-host" description:"Etcd Host"`
-		EtcdPort      int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
-		EtcdDir       string `short:"k" long:"etcd-dir" description:"Etcd Dir" default:"/"`
-		HTTPUrl       string `short:"u" long:"http-url" description:"HTTP Url"`
-		HTTPHeader    string `short:"H" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
+		EtcdHost      string `long:"etcd-host" description:"Etcd Host"`
+		EtcdPort      int    `long:"etcd-port" description:"Etcd Port" default:"2379"`
+		EtcdDir       string `long:"etcd-dir" description:"Etcd Dir" default:"/"`
+		HTTPUrl       string `long:"http-url" description:"HTTP Url"`
+		HTTPHeader    string `long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
 		HTTPFormat    string `long:"http-format" description:"HTTP Format" default:"JSON"`
-		MySQLUser     string `long:"mysql-user" description:"MySql user"`
+		MySQLUser     string `long:"mysql-user" description:"MySQL user"`
 		MySQLPassword string `long:"mysql-pass" description:"MySQL password"`
 		MySQLHost     string `long:"mysql-host" description:"MySQL host"`
 		MySQLPort     int64  `long:"mysql-port" description:"MySQL port" default:"3306"`
