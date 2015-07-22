@@ -55,21 +55,21 @@ var fns = template.FuncMap{
 }
 
 type Input struct {
-	Name       *string
-	Type       *string
-	Path       *string
-	EtcdNode   *string
-	EtcdPort   *int64
-	EtcdDir    *string
-	HttpUrl    *string
-	HttpHeader *string
-	HttpFormat *string
-	MysqlUser  *string
-	MysqlPass  *string
-	MysqlHost  *string
-	MysqlPort  *int64
-	MysqlDb    *string
-	MysqlQry   *string
+	Name          *string
+	Type          *string
+	Path          *string
+	EtcdHost      *string
+	EtcdPort      *int64
+	EtcdDir       *string
+	HTTPUrl       *string
+	HTTPHeader    *string
+	HTTPFormat    *string
+	MySQLUser     *string
+	MySQLPassword *string
+	MySQLHost     *string
+	MySQLPort     *int64
+	MySQLDatabase *string
+	MySQLQuery    *string
 }
 
 type Merge struct {
@@ -87,28 +87,28 @@ func main() {
 
 	// Options
 	var opts struct {
-		Verbose    bool   `short:"v" long:"verbose" description:"Verbose"`
-		Version    bool   `long:"version" description:"Version"`
-		Config     string `short:"c" long:"config" description:"YAML, TOML or JSON config file"`
-		Input      string `short:"i" long:"input" description:"Input, defaults to using YAML"`
-		InpFormat  string `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
-		InpFile    string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
-		TemplFile  string `short:"t" long:"template-file" description:"Template file"`
-		OutpFile   string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
-		Permission string `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
-		Owner      string `short:"O" long:"owner" description:"File Owner"`
-		EtcdNode   string `short:"n" long:"etcd-node" description:"Etcd Node"`
-		EtcdPort   int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
-		EtcdDir    string `short:"k" long:"etcd-dir" description:"Etcd Dir" default:"/"`
-		HttpUrl    string `short:"u" long:"http-url" description:"HTTP Url"`
-		HttpHeader string `short:"H" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
-		HttpFormat string `long:"http-format" description:"HTTP Format" default:"JSON"`
-		MysqlUser  string `long:"mysql-user" description:"MySql user"`
-		MysqlPass  string `long:"mysql-pass" description:"MySQL password"`
-		MysqlHost  string `long:"mysql-host" description:"MySQL host"`
-		MysqlPort  int64  `long:"mysql-port" description:"MySQL port" default:"3306"`
-		MysqlDb    string `long:"mysql-db" description:"MySQL database"`
-		MysqlQry   string `long:"mysql-query" description:"MySQL query"`
+		Verbose       bool   `short:"v" long:"verbose" description:"Verbose"`
+		Version       bool   `long:"version" description:"Version"`
+		Config        string `short:"c" long:"config" description:"YAML, TOML or JSON config file"`
+		Input         string `short:"i" long:"input" description:"Input, defaults to using YAML"`
+		InpFormat     string `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
+		InpFile       string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
+		TemplFile     string `short:"t" long:"template-file" description:"Template file"`
+		OutpFile      string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
+		Permission    string `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
+		Owner         string `short:"O" long:"owner" description:"File Owner"`
+		EtcdHost      string `short:"n" long:"etcd-host" description:"Etcd Host"`
+		EtcdPort      int    `short:"P" long:"etcd-port" description:"Etcd Port" default:"2379"`
+		EtcdDir       string `short:"k" long:"etcd-dir" description:"Etcd Dir" default:"/"`
+		HTTPUrl       string `short:"u" long:"http-url" description:"HTTP Url"`
+		HTTPHeader    string `short:"H" long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
+		HTTPFormat    string `long:"http-format" description:"HTTP Format" default:"JSON"`
+		MySQLUser     string `long:"mysql-user" description:"MySql user"`
+		MySQLPassword string `long:"mysql-pass" description:"MySQL password"`
+		MySQLHost     string `long:"mysql-host" description:"MySQL host"`
+		MySQLPort     int64  `long:"mysql-port" description:"MySQL port" default:"3306"`
+		MySQLDatabase string `long:"mysql-db" description:"MySQL database"`
+		MySQLQuery    string `long:"mysql-query" description:"MySQL query"`
 	}
 
 	// Parse options
@@ -172,18 +172,18 @@ func main() {
 	}
 
 	// Get Etcd input
-	if opts.EtcdNode != "" {
+	if opts.EtcdHost != "" {
 		// Add error handling
-		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdNode, opts.EtcdPort)}
+		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdHost, opts.EtcdPort)}
 		client := etcd.NewClient(node)
 		res, _ := client.Get(opts.EtcdDir, true, true)
 		data["Etcd"] = EtcdMap(res.Node)
 	}
 
 	// Get http input
-	if opts.HttpUrl != "" {
+	if opts.HTTPUrl != "" {
 		var f DataFmt
-		switch opts.HttpFormat {
+		switch opts.HTTPFormat {
 		case "YAML":
 			f = YAML
 		case "TOML":
@@ -195,16 +195,16 @@ func main() {
 		}
 
 		var err error
-		data["Http"], err = GetHTTP(opts.HttpUrl, opts.HttpHeader, f)
+		data["HTTP"], err = GetHTTP(opts.HTTPUrl, opts.HTTPHeader, f)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 
 	// Get MySQL input
-	if opts.MysqlHost != "" {
+	if opts.MySQLHost != "" {
 		var err error
-		data["Mysql"], err = GetMySQL(opts.MysqlUser, opts.MysqlPass, opts.MysqlHost, opts.MysqlPort, opts.MysqlDb, opts.MysqlQry)
+		data["MySQL"], err = GetMySQL(opts.MySQLUser, opts.MySQLPassword, opts.MySQLHost, opts.MySQLPort, opts.MySQLDatabase, opts.MySQLQuery)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -253,13 +253,13 @@ func main() {
 				}
 			case "etcd":
 				// Add error handling
-				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdNode, i.EtcdPort)}
+				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdHost, i.EtcdPort)}
 				client := etcd.NewClient(node)
 				res, _ := client.Get(*i.EtcdDir, true, true)
 				data[*i.Name] = EtcdMap(res.Node)
 			case "http":
 				var f DataFmt
-				switch *i.HttpFormat {
+				switch *i.HTTPFormat {
 				case "YAML":
 					f = YAML
 				case "TOML":
@@ -271,13 +271,13 @@ func main() {
 				}
 
 				var err error
-				data[*i.Name], err = GetHTTP(*i.HttpUrl, *i.HttpHeader, f)
+				data[*i.Name], err = GetHTTP(*i.HTTPUrl, *i.HTTPHeader, f)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
 			case "mysql":
 				var err error
-				data[*i.Name], err = GetMySQL(*i.MysqlUser, *i.MysqlPass, *i.MysqlHost, *i.MysqlPort, *i.MysqlDb, *i.MysqlQry)
+				data[*i.Name], err = GetMySQL(*i.MySQLUser, *i.MySQLPassword, *i.MySQLHost, *i.MySQLPort, *i.MySQLDatabase, *i.MySQLQuery)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
