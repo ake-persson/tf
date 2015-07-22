@@ -3,17 +3,18 @@ package main
 import (
 	"bytes"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
-	etcd "github.com/coreos/go-etcd/etcd"
-	flags "github.com/jessevdk/go-flags"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"os/user"
-	"reflect"
-	"strconv"
-	"strings"
-	"text/template"
+    "io/ioutil"
+    "os"
+    "os/user"
+    "reflect"
+    "strconv"
+    "strings"
+    "text/template"
+
+	log "github.com/mickep76/tf/vendor/github.com/Sirupsen/logrus"
+	etcd "github.com/mickep76/tf/vendor/github.com/coreos/go-etcd/etcd"
+	flags "github.com/mickep76/tf/vendor/github.com/jessevdk/go-flags"
+	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
 )
 
 func check(e error) {
@@ -23,33 +24,34 @@ func check(e error) {
 }
 
 var fns = template.FuncMap{
-	"last":       arrLast,
-	"join":       arrJoin,
-	"split":      strSplit,
-	"repeat":     strRepeat,
-	"keys":       intfKeys,
-	"type":       intfType,
-	"ismap":      intfIsMap,
+	"last":       IsLast,
+	"islast":     IsLast,
+	"join":       Join,
+	"split":      Split,
+	"repeat":     Repeat,
+	"keys":       Keys,
+	"type":       Type,
+	"ismap":      IsMap,
 	"upper":      strings.ToUpper,
 	"lower":      strings.ToLower,
 	"contains":   strings.Contains,
-	"replace":    strReplace,
-	"trim":       strTrim,
-	"ltrim":      strTrimLeft,
-	"rtrim":      strTrimRight,
-	"default":    intfDefault,
-	"center":     strCenter,
-	"random":     intRandom,
-	"capitalize": strCapitalize,
-	"add":        intAdd,
-	"sub":        intSub,
-	"div":        intDiv,
-	"mul":        intMul,
-	"lalign":     strAlignLeft,
-	"ralign":     strAlignRight,
-	"odd":        odd,
-	"even":       even,
-	"date":       date,
+	"replace":    Replace,
+	"trim":       Trim,
+	"ltrim":      TrimLeft,
+	"rtrim":      TrimRight,
+	"default":    Default,
+	"center":     Center,
+	"random":     Random,
+	"capitalize": Capitalize,
+	"add":        Add,
+	"sub":        Sub,
+	"div":        Div,
+	"mul":        Mul,
+	"lalign":     AlignLeft,
+	"ralign":     AlignRight,
+	"odd":        Odd,
+	"even":       Even,
+	"date":       Date,
 }
 
 type Input struct {

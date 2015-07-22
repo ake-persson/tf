@@ -1,8 +1,9 @@
 package main
 
 import (
-	etcd "github.com/coreos/go-etcd/etcd"
 	"strings"
+
+    etcd "github.com/mickep76/tf/vendor/github.com/coreos/go-etcd/etcd"
 )
 
 // Create a nested data structure from Etcd node.
