@@ -22,7 +22,11 @@ for file in $files; do
     if [ -f $file ]; then
         echo -e "${GREY}+ ${GREEN}Cleanup syntax gofmt: ${file}${RED}"
         gofmt ${file} >${file}.fmt || exit_code=1
-	mv ${file}.fmt ${file}
+		mv ${file}.fmt ${file}
+        echo -e "${GREY}+ ${GREEN}Verify syntax using golint: ${file}${RED}"
+        golint ${file} || exit_code=1
+        echo -e "${GREY}+ ${GREEN}Verify syntax using govet: ${file}${RED}"
+        go vet ${file} || exit_code=1
         echo -en ${CLEAR}
     fi
 done

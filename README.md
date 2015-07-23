@@ -4,7 +4,7 @@ Template Dockerfile or any file in Bash using YAML input and GO text template (h
 
 # Usage
 
-```bash
+```
 Usage:
   tf [OPTIONS]
 
