@@ -18,13 +18,13 @@ import (
 )
 
 var fns = template.FuncMap{
-	"last":       IsLast,
+	"last":       Last,
 	"join":       Join,
 	"split":      Split,
 	"repeat":     Repeat,
 	"keys":       Keys,
 	"type":       Type,
-	"map":        IsMap,
+	"map":        Map,
 	"upper":      strings.ToUpper,
 	"lower":      strings.ToLower,
 	"contains":   strings.Contains,
@@ -47,6 +47,7 @@ var fns = template.FuncMap{
 	"date":       Date,
 }
 
+// Input options.
 type Input struct {
 	Name          *string
 	Type          *string
@@ -65,6 +66,7 @@ type Input struct {
 	MySQLQuery    *string
 }
 
+// Merge namespaces.
 type Merge struct {
 	Name   string
 	Inputs []interface{}
@@ -234,7 +236,7 @@ func main() {
 			}
 
 			if data[*i.Name] != nil {
-				log.Fatalf("Input name already exist's: %s", i.Name)
+				log.Fatalf("Input name already exist's: %s", *i.Name)
 			}
 
 			switch *i.Type {

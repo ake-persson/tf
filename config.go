@@ -1,10 +1,10 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 )
 
+// CfgDefault contains input configuration defaults.
 type CfgDefault struct {
 	EtcdHost      *string
 	EtcdPort      *int64
@@ -17,6 +17,7 @@ type CfgDefault struct {
 	MySQLDatabase *string
 }
 
+// CfgInput contains input configuration.
 type CfgInput struct {
 	Name          *string
 	Type          *string
@@ -35,7 +36,7 @@ type CfgInput struct {
 	MySQLQuery    *string
 }
 
-// Get defaults from config file.
+// GetDefaults gets input defaults from the config file.
 func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 	var d CfgDefault
 	for k, v := range defs {
@@ -68,13 +69,13 @@ func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 			s := v.(string)
 			d.MySQLDatabase = &s
 		default:
-			return CfgDefault{}, errors.New(fmt.Sprintf("Invalid configuration key \"%v\" in [defaults]", k))
+			return CfgDefault{}, fmt.Errorf("Invalid configuration key \"%v\" in [defaults]", k)
 		}
 	}
 	return d, nil
 }
 
-// Get input from configuration file.
+// GetInput gets inputs from the configuration file.
 func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, error) {
 	var i CfgInput
 
@@ -167,53 +168,53 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 			s := v.(string)
 			i.MySQLQuery = &s
 		default:
-			return CfgInput{}, errors.New(fmt.Sprintf("Invalid configuration key \"%v\" in [inputs.%v]", k, name))
+			return CfgInput{}, fmt.Errorf("Invalid configuration key \"%v\" in [inputs.%v]", k, name)
 		}
 	}
 
 	switch *i.Type {
 	case "file":
 		if i.Path == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"file\" you need to specify \"path\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"file\" you need to specify \"path\"", name)
 		}
 	case "etcd":
 		if i.EtcdHost == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_node\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_node\"", name)
 		}
 		if i.EtcdPort == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_port\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_port\"", name)
 		}
 	case "http":
 		if i.HTTPUrl == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"http\" you need to specify \"http_url\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"http\" you need to specify \"http_url\"", name)
 		}
 		if i.HTTPHeader == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"http\" you need to specify \"http_header\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"http\" you need to specify \"http_header\"", name)
 		}
 		if i.HTTPFormat == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"http\" you need to specify \"http_format\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"http\" you need to specify \"http_format\"", name)
 		}
 	case "mysql":
 		if i.MySQLUser == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_user\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_user\"", name)
 		}
 		if i.MySQLPassword == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_pass\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_pass\"", name)
 		}
 		if i.MySQLHost == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_host\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_host\"", name)
 		}
 		if i.MySQLPort == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_port\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_port\"", name)
 		}
 		if i.MySQLDatabase == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_db\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_db\"", name)
 		}
 		if i.MySQLQuery == nil {
-			return CfgInput{}, errors.New(fmt.Sprintf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_qry\"", name))
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_qry\"", name)
 		}
 	default:
-		return CfgInput{}, errors.New(fmt.Sprintf("Unknown type \"%v\" for input [inputs.%v]", *i.Type, *i.Name))
+		return CfgInput{}, fmt.Errorf("Unknown type \"%v\" for input [inputs.%v]", *i.Type, *i.Name)
 	}
 
 	return i, nil

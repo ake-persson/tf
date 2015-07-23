@@ -10,7 +10,7 @@ import (
 	"github.com/mickep76/tf/vendor/github.com/jehiah/go-strftime"
 )
 
-// Convert []interface{} to []string{}
+// Convert []interface{} to []string{}.
 func arrIntfToStr(inp []interface{}) []string {
 	outp := make([]string, len(inp))
 	for i, val := range inp {
@@ -19,7 +19,7 @@ func arrIntfToStr(inp []interface{}) []string {
 	return outp
 }
 
-// Convert []string{} to []interface{}
+// Convert []string{} to []interface{}.
 func arrStrToIntf(inp []string) []interface{} {
 	outp := make([]interface{}, len(inp))
 	for i, val := range inp {
@@ -28,27 +28,27 @@ func arrStrToIntf(inp []string) []interface{} {
 	return outp
 }
 
-// Determine if index is the last element in the array
-func IsLast(i int, inp interface{}) bool {
+// Last element in array.
+func Last(i int, inp interface{}) bool {
 	return i == reflect.ValueOf(inp).Len()-1
 }
 
-// Join elements in an array to a string
+// Join elements in an array to a string.
 func Join(sep string, inp []interface{}) string {
 	return strings.Join(arrIntfToStr(inp), sep)
 }
 
-// Split string into an array
+// Split string into an array.
 func Split(sep string, inp string) []interface{} {
 	return arrStrToIntf(strings.Split(inp, sep))
 }
 
-// Repeat string x number of times
+// Repeat string x number of times.
 func Repeat(rep int, inp string) string {
 	return strings.Repeat(inp, rep)
 }
 
-// Get keys from interface{}
+// Keys from interface{}.
 func Keys(inp interface{}) (interface{}, error) {
 	if inp == nil {
 		return nil, nil
@@ -61,51 +61,52 @@ func Keys(inp interface{}) (interface{}, error) {
 
 	vk := val.MapKeys()
 	k := make([]interface{}, val.Len())
-	for i, _ := range k {
+	for i := range k {
 		k[i] = vk[i].Interface()
 	}
 
 	return k, nil
 }
 
-// Get type (usefull for debugging templates)
+// Type of variable (usefull for debugging templates).
 func Type(inp interface{}) string {
 	return fmt.Sprintf("%v", reflect.TypeOf(inp))
 }
 
-// Test if type is a map i.e. not printable
-func IsMap(inp interface{}) bool {
+// Map returns true if type is a map.
+func Map(inp interface{}) bool {
 	return reflect.TypeOf(inp).Kind() == reflect.Map
 }
 
-// String replace
+// Replace string.
 func Replace(oldStr string, newStr string, str string) string {
 	return strings.Replace(str, oldStr, newStr, -1)
 }
 
-// String trim
+// Trim trims characters on the left and right side of the string.
 func Trim(trim string, str string) string {
 	return strings.Trim(str, trim)
 }
 
-// String trim left
+// TrimLeft trims characters on the left side of the string.
 func TrimLeft(trim string, str string) string {
 	return strings.TrimLeft(str, trim)
 }
 
-// String trim right
+// TrimRight trims characters on the right side of string.
 func TrimRight(trim string, str string) string {
 	return strings.TrimRight(str, trim)
 }
 
-// If no value is passed for the second arg. it returns the default
-func Default(def interface{}, inp_opt ...interface{}) interface{} {
-	if len(inp_opt) > 0 {
-		def = inp_opt[0]
+// Default returns default if argument is empty.
+func Default(def interface{}, inpOpt ...interface{}) interface{} {
+	if len(inpOpt) > 0 {
+		def = inpOpt[0]
 	}
 	return def
 }
 
+// Center centers string.
 func Center(size int, str string) string {
 	if size < len(str) {
 		return str
@@ -118,11 +119,12 @@ func Center(size int, str string) string {
 	return fmt.Sprintf("%s%s%s", strings.Repeat(" ", lpad), str, strings.Repeat(" ", rpad))
 }
 
+// Random returns random number.
 func Random(size int) int {
 	return rand.Intn(size)
 }
 
-// Capitalize first character in string
+// Capitalize capitalizes first character in string.
 func Capitalize(str string) string {
 	for i, v := range str {
 		return strings.ToUpper(string(v)) + str[i+1:]
@@ -130,22 +132,27 @@ func Capitalize(str string) string {
 	return ""
 }
 
+// Add do additions to number.
 func Add(y int, x int) int {
 	return x + y
 }
 
+// Sub do subtractions to number.
 func Sub(y int, x int) int {
 	return x - y
 }
 
+// Div do divisions to number.
 func Div(y int, x int) int {
 	return x / y
 }
 
+// Mul do multiplication to number.
 func Mul(y int, x int) int {
 	return x * y
 }
 
+// AlignLeft aligns text to the left.
 func AlignLeft(size int, str string) string {
 	if size < len(str) {
 		return str
@@ -156,6 +163,7 @@ func AlignLeft(size int, str string) string {
 	return fmt.Sprintf("%s%s", str, strings.Repeat(" ", pad))
 }
 
+// AlignRight aligns text to the right.
 func AlignRight(size int, str string) string {
 	if size < len(str) {
 		return str
@@ -166,6 +174,7 @@ func AlignRight(size int, str string) string {
 	return fmt.Sprintf("%s%s", strings.Repeat(" ", pad), str)
 }
 
+// Odd return true if it's an odd number.
 func Odd(x int) bool {
 	if (x%2 - 1) == 0 {
 		return true
@@ -173,6 +182,7 @@ func Odd(x int) bool {
 	return false
 }
 
+// Even return true if it's an even number.
 func Even(x int) bool {
 	if (x % 2) == 0 {
 		return true
@@ -180,6 +190,7 @@ func Even(x int) bool {
 	return false
 }
 
+// Date return date as formated string.
 func Date(args ...interface{}) string {
 	if len(args) == 1 {
 		return strftime.Format(args[0].(string), time.Now())

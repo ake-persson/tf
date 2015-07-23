@@ -19,7 +19,7 @@ import (
 	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
 )
 
-// Data format represents which data serialization is used YAML, JSON or TOML.
+// DataFmt represents which data serialization is used YAML, JSON or TOML.
 type DataFmt int
 
 // Constants for data format.
@@ -29,7 +29,7 @@ const (
 	JSON
 )
 
-// Unmarshal YAML/JSON/TOML serialized data.
+// UnmarshalData unmarshal YAML/JSON/TOML serialized data.
 func UnmarshalData(cont []byte, f DataFmt) (map[string]interface{}, error) {
 	v := make(map[string]interface{})
 
@@ -60,7 +60,7 @@ func UnmarshalData(cont []byte, f DataFmt) (map[string]interface{}, error) {
 	return v, nil
 }
 
-// Load file with serialized data.
+// LoadFile loads a file with serialized data.
 func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, error) {
 	var f DataFmt
 
@@ -108,7 +108,7 @@ func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, e
 	return v, nil
 }
 
-// Get OS Environment variables.
+// GetOSEnv gets OS Environment variables.
 func GetOSEnv() map[string]interface{} {
 	v := make(map[string]interface{})
 
@@ -120,7 +120,7 @@ func GetOSEnv() map[string]interface{} {
 	return v
 }
 
-// Request HTTP url.
+// GetHTTP requests a HTTP url.
 func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -151,7 +151,7 @@ func GetHTTP(url string, header string, f DataFmt) (map[string]interface{}, erro
 	return v, nil
 }
 
-// Query MySQL.
+// GetMySQL queries MySQL.
 func GetMySQL(user string, pass string, host string, port int64, db string, qry string) ([]interface{}, error) {
 	log.Infof("Connecting to MySQL to database %s on host %s", host, db)
 	log.Infof("Connect DSN: %s:%s@tcp(%s:%v)/%s", user, "xxxxxxxx", host, port, db)
