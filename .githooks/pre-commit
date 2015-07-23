@@ -17,11 +17,6 @@ which golint &>/dev/null || error "Failed to locate golint"
 which gofmt &>/dev/null || error "Failed to locate gofmt"
 which go &>/dev/null || error "Failed to locate go"
 
-echo -e "${GREY}+ ${GREEN}Verify syntax using golint: ${file}${RED}"
-golint ${file} || exit 1
-echo -e "${GREY}+ ${GREEN}Verify syntax using go vet: ${file}${RED}"
-go vet ${file} || exit 1
-
 exit_code=0
 files=$( git diff-index --cached HEAD --name-only | grep -E '\.go$' )
 for file in $files; do
@@ -29,13 +24,15 @@ for file in $files; do
         echo -e "${GREY}+ ${GREEN}Cleanup syntax gofmt: ${file}${RED}"
         gofmt ${file} >${file}.fmt || exit_code=1
 		mv ${file}.fmt ${file}
-#        echo -e "${GREY}+ ${GREEN}Verify syntax using golint: ${file}${RED}"
-#        golint ${file} || exit_code=1
-#        echo -e "${GREY}+ ${GREEN}Verify syntax using govet: ${file}${RED}"
-#        go vet ${file} || exit_code=1
         echo -en ${CLEAR}
     fi
 done
+
+echo -e "${GREY}+ ${GREEN}Verify syntax using golint: ${file}${RED}"
+golint ${file} || exit 1
+
+echo -e "${GREY}+ ${GREEN}Verify syntax using go vet: ${file}${RED}"
+go vet ${file} || exit 1
 
 echo -e "${GREY}+ ${GREEN}Build project to check for error(s)${RED}"
 go build || exit_code=1
