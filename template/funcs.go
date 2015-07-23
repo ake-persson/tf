@@ -1,14 +1,58 @@
-package main
+package template
 
 import (
+	"bytes"
 	"fmt"
 	"math/rand"
 	"reflect"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/mickep76/tf/vendor/github.com/jehiah/go-strftime"
 )
+
+var funcs = template.FuncMap{
+	"last":       Last,
+	"join":       Join,
+	"split":      Split,
+	"repeat":     Repeat,
+	"keys":       Keys,
+	"type":       Type,
+	"map":        Map,
+	"upper":      strings.ToUpper,
+	"lower":      strings.ToLower,
+	"contains":   strings.Contains,
+	"replace":    Replace,
+	"trim":       Trim,
+	"ltrim":      TrimLeft,
+	"rtrim":      TrimRight,
+	"default":    Default,
+	"center":     Center,
+	"random":     Random,
+	"capitalize": Capitalize,
+	"add":        Add,
+	"sub":        Sub,
+	"div":        Div,
+	"mul":        Mul,
+	"lalign":     AlignLeft,
+	"ralign":     AlignRight,
+	"odd":        Odd,
+	"even":       Even,
+	"date":       Date,
+}
+
+// Parse template.
+func Compile(s string, d map[string]interface{}) (*bytes.Buffer, error) {
+	t := template.Must(template.New("template").Funcs(funcs).Parse(s))
+
+	b := new(bytes.Buffer)
+	err := t.Execute(b, d)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
+}
 
 // Convert []interface{} to []string{}.
 func arrIntfToStr(inp []interface{}) []string {

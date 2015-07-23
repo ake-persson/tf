@@ -1,7 +1,6 @@
-package main
+package input
 
 import (
-	"bytes"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -11,12 +10,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
 
 	"github.com/mickep76/tf/vendor/github.com/BurntSushi/toml"
 	log "github.com/mickep76/tf/vendor/github.com/Sirupsen/logrus"
 	_ "github.com/mickep76/tf/vendor/github.com/go-sql-driver/mysql"
 	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
+
+	"github.com/mickep76/tf/template"
 )
 
 // DataFmt represents which data serialization is used YAML, JSON or TOML.
@@ -90,14 +90,18 @@ func LoadFile(fn string, data map[string]interface{}) (map[string]interface{}, e
 	}
 
 	log.Infof("Template input file: %s", fn)
-	t := template.Must(template.New("template").Funcs(fns).Parse(string(c)))
-
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, data)
+	buf, err := template.Compile(string(c), data)
 	if err != nil {
-		return nil, err
+		log.Fatal(err.Error())
 	}
 
+	/*
+		buf := new(bytes.Buffer)
+		err = t.Execute(buf, data)
+		if err != nil {
+			return nil, err
+		}
+	*/
 	log.Infof("Input file result: %s\n%s", fn, string(buf.Bytes()))
 
 	v, err2 := UnmarshalData(buf.Bytes(), f)

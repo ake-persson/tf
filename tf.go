@@ -1,51 +1,21 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/user"
 	"reflect"
 	"strconv"
-	"strings"
-	"text/template"
 
 	log "github.com/mickep76/tf/vendor/github.com/Sirupsen/logrus"
 	etcd "github.com/mickep76/tf/vendor/github.com/coreos/go-etcd/etcd"
 	flags "github.com/mickep76/tf/vendor/github.com/jessevdk/go-flags"
 	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
-)
 
-var fns = template.FuncMap{
-	"last":       Last,
-	"join":       Join,
-	"split":      Split,
-	"repeat":     Repeat,
-	"keys":       Keys,
-	"type":       Type,
-	"map":        Map,
-	"upper":      strings.ToUpper,
-	"lower":      strings.ToLower,
-	"contains":   strings.Contains,
-	"replace":    Replace,
-	"trim":       Trim,
-	"ltrim":      TrimLeft,
-	"rtrim":      TrimRight,
-	"default":    Default,
-	"center":     Center,
-	"random":     Random,
-	"capitalize": Capitalize,
-	"add":        Add,
-	"sub":        Sub,
-	"div":        Div,
-	"mul":        Mul,
-	"lalign":     AlignLeft,
-	"ralign":     AlignRight,
-	"odd":        Odd,
-	"even":       Even,
-	"date":       Date,
-}
+	"github.com/mickep76/tf/input"
+	"github.com/mickep76/tf/template"
+)
 
 // Input options.
 type Input struct {
@@ -118,7 +88,7 @@ func main() {
 
 	// Print version
 	if opts.Version {
-		fmt.Printf("tf %s\n", version)
+		fmt.Printf("tf %s\n", Version)
 		os.Exit(0)
 	}
 
@@ -129,24 +99,24 @@ func main() {
 
 	// Get environment variables
 	data := make(map[string]interface{})
-	data["Env"] = GetOSEnv()
+	data["Env"] = input.GetOSEnv()
 
 	// Get argument input
 	if opts.Input != "" {
-		var f DataFmt
+		var f input.DataFmt
 		switch opts.InpFormat {
 		case "YAML":
-			f = YAML
+			f = input.YAML
 		case "TOML":
-			f = TOML
+			f = input.TOML
 		case "JSON":
-			f = JSON
+			f = input.JSON
 		default:
 			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 		}
 
 		var err error
-		data["Arg"], err = UnmarshalData([]byte(opts.Input), f)
+		data["Arg"], err = input.UnmarshalData([]byte(opts.Input), f)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -160,7 +130,7 @@ func main() {
 	// Get file input
 	if opts.InpFile != "" {
 		var err error
-		data["File"], err = LoadFile(opts.InpFile, data)
+		data["File"], err = input.LoadFile(opts.InpFile, data)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -172,25 +142,25 @@ func main() {
 		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdHost, opts.EtcdPort)}
 		client := etcd.NewClient(node)
 		res, _ := client.Get(opts.EtcdDir, true, true)
-		data["Etcd"] = EtcdMap(res.Node)
+		data["Etcd"] = input.EtcdMap(res.Node)
 	}
 
 	// Get http input
 	if opts.HTTPUrl != "" {
-		var f DataFmt
+		var f input.DataFmt
 		switch opts.HTTPFormat {
 		case "YAML":
-			f = YAML
+			f = input.YAML
 		case "TOML":
-			f = TOML
+			f = input.TOML
 		case "JSON":
-			f = JSON
+			f = input.JSON
 		default:
 			log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 		}
 
 		var err error
-		data["HTTP"], err = GetHTTP(opts.HTTPUrl, opts.HTTPHeader, f)
+		data["HTTP"], err = input.GetHTTP(opts.HTTPUrl, opts.HTTPHeader, f)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -199,7 +169,7 @@ func main() {
 	// Get MySQL input
 	if opts.MySQLHost != "" {
 		var err error
-		data["MySQL"], err = GetMySQL(opts.MySQLUser, opts.MySQLPassword, opts.MySQLHost, opts.MySQLPort, opts.MySQLDatabase, opts.MySQLQuery)
+		data["MySQL"], err = input.GetMySQL(opts.MySQLUser, opts.MySQLPassword, opts.MySQLHost, opts.MySQLPort, opts.MySQLDatabase, opts.MySQLQuery)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -207,7 +177,7 @@ func main() {
 
 	// Load config file
 	if opts.Config != "" {
-		cfg, err := LoadFile(opts.Config, data)
+		cfg, err := input.LoadFile(opts.Config, data)
 		data["Cfg"] = cfg
 		if err != nil {
 			log.Fatal(err.Error())
@@ -242,7 +212,7 @@ func main() {
 			switch *i.Type {
 			case "file":
 				var err error
-				data[*i.Name], err = LoadFile(*i.Path, data)
+				data[*i.Name], err = input.LoadFile(*i.Path, data)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
@@ -251,28 +221,28 @@ func main() {
 				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdHost, i.EtcdPort)}
 				client := etcd.NewClient(node)
 				res, _ := client.Get(*i.EtcdDir, true, true)
-				data[*i.Name] = EtcdMap(res.Node)
+				data[*i.Name] = input.EtcdMap(res.Node)
 			case "http":
-				var f DataFmt
+				var f input.DataFmt
 				switch *i.HTTPFormat {
 				case "YAML":
-					f = YAML
+					f = input.YAML
 				case "TOML":
-					f = TOML
+					f = input.TOML
 				case "JSON":
-					f = JSON
+					f = input.JSON
 				default:
 					log.Fatal("Unsupported data format, needs to be YAML, JSON or TOML")
 				}
 
 				var err error
-				data[*i.Name], err = GetHTTP(*i.HTTPUrl, *i.HTTPHeader, f)
+				data[*i.Name], err = input.GetHTTP(*i.HTTPUrl, *i.HTTPHeader, f)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
 			case "mysql":
 				var err error
-				data[*i.Name], err = GetMySQL(*i.MySQLUser, *i.MySQLPassword, *i.MySQLHost, *i.MySQLPort, *i.MySQLDatabase, *i.MySQLQuery)
+				data[*i.Name], err = input.GetMySQL(*i.MySQLUser, *i.MySQLPassword, *i.MySQLHost, *i.MySQLPort, *i.MySQLDatabase, *i.MySQLQuery)
 				if err != nil {
 					log.Fatal(err.Error())
 				}
@@ -342,14 +312,21 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Parse template
-	t := template.Must(template.New("template").Funcs(fns).Parse(templ))
-
-	buf := new(bytes.Buffer)
-	err := t.Execute(buf, data)
+	// Parse and compile template.
+	buf, err := template.Compile(templ, data)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	/*
+	   txttempl.Must(txttempl.New("template").Funcs(fns).Parse(templ))
+
+	   	buf := new(bytes.Buffer)
+	   	err := t.Execute(buf, data)
+	   	if err != nil {
+	   		log.Fatal(err.Error())
+	   	}
+	*/
 
 	// Write result
 	if opts.OutpFile != "" {
