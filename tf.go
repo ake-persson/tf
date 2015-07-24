@@ -138,10 +138,12 @@ func main() {
 
 	// Get Etcd input.
 	if opts.EtcdHost != nil {
-		// Add error handling.
 		node := []string{fmt.Sprintf("http://%v:%v", *opts.EtcdHost, opts.EtcdPort)}
 		client := etcd.NewClient(node)
-		res, _ := client.Get(opts.EtcdDir, true, true)
+		res, err := client.Get(opts.EtcdDir, true, true)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 		data["Etcd"] = input.EtcdMap(res.Node)
 	}
 
@@ -231,10 +233,12 @@ func main() {
 					log.Fatal(err.Error())
 				}
 			case "etcd":
-				// Add error handling.
 				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdHost, i.EtcdPort)}
 				client := etcd.NewClient(node)
-				res, _ := client.Get(*i.EtcdDir, true, true)
+				res, err := client.Get(*i.EtcdDir, true, true)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
 				data[*i.Name] = input.EtcdMap(res.Node)
 			case "http":
 				var f input.DataFmt
