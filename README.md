@@ -9,31 +9,31 @@ Usage:
   tf [OPTIONS]
 
 Application Options:
-  -v, --verbose        Verbose
-      --version        Version
-  -c, --config=        YAML, TOML or JSON config file
-  -i, --input=         Input, defaults to using YAML
-  -F, --input-format=  Data serialization format YAML, TOML or JSON (YAML)
-  -f, --input-file=    Input file, data serialization format used is based on the file extension
-  -t, --template-file= Template file
-  -o, --output-file=   Output file (STDOUT)
-  -p, --permission=    File permissions in octal (644)
-  -O, --owner=         File Owner
-      --etcd-host=     Etcd Host
-      --etcd-port=     Etcd Port (2379)
-      --etcd-dir=      Etcd Dir (/)
-      --http-url=      HTTP Url
-      --http-header=   HTTP Header (Accept: application/json)
-      --http-format=   HTTP Format (JSON)
-      --mysql-user=    MySQL user
-      --mysql-pass=    MySQL password
-      --mysql-host=    MySQL host
-      --mysql-port=    MySQL port (3306)
-      --mysql-db=      MySQL database
-      --mysql-query=   MySQL query
+  -v, --verbose         Verbose
+      --version         Version
+  -c, --config=         YAML, TOML or JSON config file
+  -i, --input=          Input, defaults to using YAML
+  -F, --input-format=   Data serialization format YAML, TOML or JSON (YAML)
+  -f, --input-file=     Input file, data serialization format used is based on the file extension
+  -t, --template-file=  Template file
+  -o, --output-file=    Output file (STDOUT)
+  -p, --permission=     File permissions in octal (644)
+  -O, --owner=          File Owner
+      --etcd-host=      Etcd Host
+      --etcd-port=      Etcd Port (2379)
+      --etcd-dir=       Etcd Dir (/)
+      --http-url=       HTTP Url
+      --http-header=    HTTP Header (Accept: application/json)
+      --http-format=    HTTP Format (JSON)
+      --mysql-user=     MySQL user
+      --mysql-password= MySQL password
+      --mysql-host=     MySQL host
+      --mysql-port=     MySQL port (3306)
+      --mysql-database= MySQL database
+      --mysql-query=    MySQL query
 
 Help Options:
-  -h, --help           Show this help message
+  -h, --help            Show this help message
 ```
 
 Input will have it's own namespace such as Arg, File, Env, Etcd. you can also get this by:
@@ -50,46 +50,17 @@ Configuration file is also a template i.e. you can use .Env and .Arg for customi
 
 ## Defaults
 
-**etcd_node**
-
-Default Etcd node.
-
-**etcd_port**
-
-Default Etcd port, will default to 2379 if not set.
-
-**http_header**
-
-HTTP accept header.
-
-**example:**
-```
-application/json
-```
-
-**http_format**
-
-Format used by the http response JSON, YAML or TOML.
-
-**mysql_user**
-
-Default MySQL user.
-
-**mysql_pass**
-
-Default MySQL password.
-
-**mysql_host**
-
-Default MySQL host.
-
-**mysql_port**
-
-Default MySql port, will default to 3306 if not set.
-
-**mysql_db**
-
-MySQL database.
+Key       | Description | Default
+--------- | ----------- | -------
+etcd_host | Default Etcd node. |
+etcd_port | Default Etcd port. | 2379
+http_header | HTTP accept header. | application/json
+http_format | Format used by the http response JSON, YAML or TOML. | JSON
+mysql_user | Default MySQL user. |
+mysql_password | Default MySQL password. |
+mysql_host | Default MySQL host. |
+mysql_port | Default MySql port | 3306
+mysql_database | MySQL database. |
 
 **Example:**
 
@@ -99,7 +70,7 @@ mysql_user = "test"
 mysql_pass = "test"
 mysql_host = "mysql.example.com"
 mysql_port = 3306
-mysql_db = "test"
+mysql_database = "test"
 ```
 
 ## Inputs
@@ -126,7 +97,7 @@ Path to input file, format will be determined by file extension .yaml, .json or 
 
 Name of input in data namespace, this will override the name already given in the [inputs.<name>].
 
-**etcd_node**
+**etcd_host**
 
 Etcd node to connect to.
 
@@ -158,7 +129,7 @@ Format used by the http response JSON, YAML or TOML.
 
 MySQL user for connection.
 
-**mysql_pass**
+**mysql_password**
 
 MySQL password for connection.
 
@@ -170,11 +141,11 @@ MySQL host to connect to.
 
 MySQL post to connect to.
 
-**mysql_db**
+**mysql_database**
 
 MySQL database to connect to.
 
-**mysql_qry**
+**mysql_query**
 
 MySQL SQL query.
 
@@ -184,13 +155,13 @@ MySQL SQL query.
 ```
 [defaults]
 mysql_user = "test"
-mysql_pass = "test"
+mysql_password = "test"
 mysql_host = "mysql.example.com"
-mysql_db = "test"
-etcd_node = "etcd1.example.com"
+mysql_database = "test"
+etcd_host = "etcd1.example.com"
 
 [inputs.MySQLHost]
-mysql_qry = "SELECT host, location FROM hosts WHERE host LIKE '{{ .Arg.host }}'"
+mysql_query = "SELECT host, location FROM hosts WHERE host LIKE '{{ .Arg.host }}'"
 
 [inputs.EtcdHost]
 etcd_dir = "/hosts/{{ .host }}"
