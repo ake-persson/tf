@@ -77,77 +77,42 @@ mysql_database = "test"
 
 ### Generic
 
-**name**
-
-Name of input in data namespace, this will override the name already given in the [inputs.<name>].
+Key | Description | Default
+--- | ----------- | -------
+name | Name of input in data namespace. | Name given in [inputs.<name>].
 
 ### Type: file
 
-**name**
-
-Name of input in data namespace, this will override the name already given in the [inputs.<name>].
-
-**path**
-
-Path to input file, format will be determined by file extension .yaml, .json or .toml.
+Key | Description | Default
+--- | ----------- | -------
+path | Path to input file, format will be determined by file extension .yaml, .json or .toml. |
 
 ### Type: etcd
 
-**name**
-
-Name of input in data namespace, this will override the name already given in the [inputs.<name>].
-
-**etcd_host**
-
-Etcd node to connect to.
-
-**etcd_port**
-
-Etcd port to connect to.
-
-**etcd_dir**
-
-Etcd directory to query, this will be queried recursively.
+Key | Description | Default
+--- | ----------- | -------
+etcd_host | Etcd node to connect to. |
+etcd_port | Etcd port to connect to. | 2379
+etcd_dir | Etcd directory to query, this will be queried recursively. |
 
 ### Type: http
 
-**http_url**
-
-HTTP url to request.
-
-*http_header**
-
-HTTP accept headers to use for request. Optional will default to JSON.
-
-**http_format**
-
-Format used by the http response JSON, YAML or TOML.
+Key | Description | Default
+--- | ----------- | -------
+http_url | HTTP url to request. |
+http_header | HTTP accept headers to use for request. Optional will default to JSON. |
+http_format | Format used by the http response JSON, YAML or TOML. |
 
 ### Type: mysql
 
-**mysql_user**
-
-MySQL user for connection.
-
-**mysql_password**
-
-MySQL password for connection.
-
-**mysql_host**
-
-MySQL host to connect to.
-
-**mysql_port**
-
-MySQL post to connect to.
-
-**mysql_database**
-
-MySQL database to connect to.
-
-**mysql_query**
-
-MySQL SQL query.
+Key | Description | Default
+--- | ----------- | -------
+mysql_user | MySQL user for connection. |
+mysql_password | MySQL password for connection. |
+mysql_host | MySQL host to connect to. |
+mysql_port | MySQL post to connect to. |
+mysql_database | MySQL database to connect to. |
+mysql_query | MySQL SQL query. |
 
 ## Example
 
