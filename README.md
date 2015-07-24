@@ -77,11 +77,15 @@ mysql_database = "test"
 
 ### Generic
 
-Input | Key | Description | Default
------ | ----| ----------- | -------
-generic | name | Name of input in data namespace. | Name given in [inputs.<name>].
-generic | type | Type of input file, etcd, http, mysql. |
------ | ----| ----------- | -------
+Key | Description | Default
+----| ----------- | -------
+name | Name of input in data namespace. | Name given in [inputs.<name>].
+type | Type of input file, etcd, http, mysql. |
+
+### Specific
+
+Type | Key | Description | Default
+---- | --- | ----------- | -------
 file | path | Path to input file, format will be determined by file extension .yaml, .json or .toml.
 etcd | etcd_host | Etcd node to connect to.
 etcd | etcd_port | Etcd port to connect to. | 2379
