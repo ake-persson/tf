@@ -253,9 +253,11 @@ Currently Go text/template doesn't have a way to [suppress newlines](https://git
 
 # Roadmap
 
+- Add test's
 - LDAP support
 - Add sort array asc. and desc. templ. func.
-- Examples with data Etcd
+- Examples with Etcd data
+- Examples with MySQL data
 - Validation of data input using schema
 - Config that is evaluated in sorted file order for consequtive queries using prev. values
   "/etc/tf.d/01-http", "/etc/tf.d/02-http" etc.
