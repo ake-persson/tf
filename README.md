@@ -77,27 +77,24 @@ mysql_database = "test"
 
 ### Generic
 
-Key | Description | Default
---- | ----------- | -------
-name | Name of input in data namespace. | Name given in [inputs.<name>].
-**Type: file**
---- | ----------- | -------
-path | Path to input file, format will be determined by file extension .yaml, .json or .toml. |
-**Type: etcd**
-etcd_host | Etcd node to connect to. |
-etcd_port | Etcd port to connect to. | 2379
-etcd_dir | Etcd directory to query, this will be queried recursively. |
-**Type: http** |
-http_url | HTTP url to request. |
-http_header | HTTP accept headers to use for request. Optional will default to JSON. |
-http_format | Format used by the http response JSON, YAML or TOML. |
-**Type: mysql** |
-mysql_user | MySQL user for connection. |
-mysql_password | MySQL password for connection. |
-mysql_host | MySQL host to connect to. |
-mysql_port | MySQL post to connect to. |
-mysql_database | MySQL database to connect to. |
-mysql_query | MySQL SQL query. |
+Input | Key | Description | Default
+----- | ----| ----------- | -------
+generic | name | Name of input in data namespace. | Name given in [inputs.<name>].
+generic | type | Type of input file, etcd, http, mysql. |
+----- | ----| ----------- | -------
+file | path | Path to input file, format will be determined by file extension .yaml, .json or .toml.
+etcd | etcd_host | Etcd node to connect to.
+etcd | etcd_port | Etcd port to connect to. | 2379
+etcd | etcd_dir | Etcd directory to query, this will be queried recursively.
+http | http_url | HTTP url to request.
+http | http_header | HTTP accept headers to use for request. Optional will default to JSON.
+http | http_format | Format used by the http response JSON, YAML or TOML.
+mysql | mysql_user | MySQL user for connection.
+mysql | mysql_password | MySQL password for connection.
+mysql | mysql_host | MySQL host to connect to.
+mysql | mysql_port | MySQL post to connect to.
+mysql | mysql_database | MySQL database to connect to.
+mysql | mysql_query | MySQL SQL query.
 
 ## Example
 
