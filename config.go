@@ -41,7 +41,7 @@ func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 	var d CfgDefault
 	for k, v := range defs {
 		switch k {
-		case "etcd_node":
+		case "etcd_host":
 			s := v.(string)
 			d.EtcdHost = &s
 		case "etcd_port":
@@ -56,7 +56,7 @@ func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 		case "mysql_user":
 			s := v.(string)
 			d.MySQLUser = &s
-		case "mysql_pass":
+		case "mysql_password":
 			s := v.(string)
 			d.MySQLPassword = &s
 		case "mysql_host":
@@ -65,7 +65,7 @@ func GetDefaults(defs map[string]interface{}) (CfgDefault, error) {
 		case "mysql_port":
 			n := v.(int64)
 			d.MySQLPort = &n
-		case "mysql_db":
+		case "mysql_database":
 			s := v.(string)
 			d.MySQLDatabase = &s
 		default:
@@ -152,7 +152,7 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 		case "mysql_user":
 			s := v.(string)
 			i.MySQLUser = &s
-		case "mysql_pass":
+		case "mysql_password":
 			s := v.(string)
 			i.MySQLPassword = &s
 		case "mysql_host":
@@ -161,10 +161,10 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 		case "mysql_port":
 			n := v.(int64)
 			i.MySQLPort = &n
-		case "mysql_db":
+		case "mysql_database":
 			s := v.(string)
 			i.MySQLDatabase = &s
-		case "mysql_qry":
+		case "mysql_query":
 			s := v.(string)
 			i.MySQLQuery = &s
 		default:
@@ -179,7 +179,7 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 		}
 	case "etcd":
 		if i.EtcdHost == nil {
-			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_node\"", name)
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_host\"", name)
 		}
 		if i.EtcdPort == nil {
 			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"etcd\" you need to specify \"etcd_port\"", name)
@@ -199,19 +199,16 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_user\"", name)
 		}
 		if i.MySQLPassword == nil {
-			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_pass\"", name)
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_password\"", name)
 		}
 		if i.MySQLHost == nil {
 			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_host\"", name)
 		}
-		if i.MySQLPort == nil {
-			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_port\"", name)
-		}
 		if i.MySQLDatabase == nil {
-			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_db\"", name)
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_database\"", name)
 		}
 		if i.MySQLQuery == nil {
-			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_qry\"", name)
+			return CfgInput{}, fmt.Errorf("For input [inputs.%v] type \"mysql\" you need to specify \"mysql_query\"", name)
 		}
 	default:
 		return CfgInput{}, fmt.Errorf("Unknown type \"%v\" for input [inputs.%v]", *i.Type, *i.Name)

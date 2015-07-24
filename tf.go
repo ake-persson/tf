@@ -46,37 +46,37 @@ func main() {
 	// Get the FileInfo struct describing the standard input.
 	fi, _ := os.Stdin.Stat()
 
-	// Set log options
+	// Set log options.
 	log.SetOutput(os.Stderr)
 	log.SetLevel(log.WarnLevel)
 
-	// Options
+	// Options.
 	var opts struct {
-		Verbose       bool   `short:"v" long:"verbose" description:"Verbose"`
-		Version       bool   `long:"version" description:"Version"`
-		Config        string `short:"c" long:"config" description:"YAML, TOML or JSON config file"`
-		Input         string `short:"i" long:"input" description:"Input, defaults to using YAML"`
-		InpFormat     string `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
-		InpFile       string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
-		TemplFile     string `short:"t" long:"template-file" description:"Template file"`
-		OutpFile      string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
-		Permission    string `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
-		Owner         string `short:"O" long:"owner" description:"File Owner"`
-		EtcdHost      string `long:"etcd-host" description:"Etcd Host"`
-		EtcdPort      int    `long:"etcd-port" description:"Etcd Port" default:"2379"`
-		EtcdDir       string `long:"etcd-dir" description:"Etcd Dir" default:"/"`
-		HTTPUrl       string `long:"http-url" description:"HTTP Url"`
-		HTTPHeader    string `long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
-		HTTPFormat    string `long:"http-format" description:"HTTP Format" default:"JSON"`
-		MySQLUser     string `long:"mysql-user" description:"MySQL user"`
-		MySQLPassword string `long:"mysql-pass" description:"MySQL password"`
-		MySQLHost     string `long:"mysql-host" description:"MySQL host"`
-		MySQLPort     int64  `long:"mysql-port" description:"MySQL port" default:"3306"`
-		MySQLDatabase string `long:"mysql-db" description:"MySQL database"`
-		MySQLQuery    string `long:"mysql-query" description:"MySQL query"`
+		Verbose       bool    `short:"v" long:"verbose" description:"Verbose"`
+		Version       bool    `long:"version" description:"Version"`
+		Config        string  `short:"c" long:"config" description:"YAML, TOML or JSON config file"`
+		Input         *string `short:"i" long:"input" description:"Input, defaults to using YAML"`
+		InpFormat     string  `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
+		InpFile       *string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
+		TemplFile     *string `short:"t" long:"template-file" description:"Template file"`
+		OutpFile      *string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
+		Permission    string  `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
+		Owner         *string `short:"O" long:"owner" description:"File Owner"`
+		EtcdHost      *string `long:"etcd-host" description:"Etcd Host"`
+		EtcdPort      int     `long:"etcd-port" description:"Etcd Port" default:"2379"`
+		EtcdDir       string  `long:"etcd-dir" description:"Etcd Dir" default:"/"`
+		HTTPUrl       *string `long:"http-url" description:"HTTP Url"`
+		HTTPHeader    string  `long:"http-header" description:"HTTP Header" default:"Accept: application/json"`
+		HTTPFormat    string  `long:"http-format" description:"HTTP Format" default:"JSON"`
+		MySQLUser     *string `long:"mysql-user" description:"MySQL user"`
+		MySQLPassword *string `long:"mysql-password" description:"MySQL password"`
+		MySQLHost     *string `long:"mysql-host" description:"MySQL host"`
+		MySQLPort     int64   `long:"mysql-port" description:"MySQL port" default:"3306"`
+		MySQLDatabase *string `long:"mysql-database" description:"MySQL database"`
+		MySQLQuery    *string `long:"mysql-query" description:"MySQL query"`
 	}
 
-	// Parse options
+	// Parse options.
 	if _, err := flags.Parse(&opts); err != nil {
 		ferr := err.(*flags.Error)
 		if ferr.Type == flags.ErrHelp {
@@ -86,23 +86,23 @@ func main() {
 		}
 	}
 
-	// Print version
+	// Print version.
 	if opts.Version {
 		fmt.Printf("tf %s\n", Version)
 		os.Exit(0)
 	}
 
-	// Set verbose
+	// Set verbose.
 	if opts.Verbose {
 		log.SetLevel(log.InfoLevel)
 	}
 
-	// Get environment variables
+	// Get environment variables.
 	data := make(map[string]interface{})
 	data["Env"] = input.GetOSEnv()
 
-	// Get argument input
-	if opts.Input != "" {
+	// Get argument input.
+	if opts.Input != nil {
 		var f input.DataFmt
 		switch opts.InpFormat {
 		case "YAML":
@@ -116,37 +116,37 @@ func main() {
 		}
 
 		var err error
-		data["Arg"], err = input.UnmarshalData([]byte(opts.Input), f)
+		data["Arg"], err = input.UnmarshalData([]byte(*opts.Input), f)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
-		// Copy .Arg namespace to . for convenience
+		// Copy .Arg namespace to . for conveniencea.
 		for k, v := range data["Arg"].(map[string]interface{}) {
 			data[k] = v
 		}
 	}
 
-	// Get file input
-	if opts.InpFile != "" {
+	// Get file input.
+	if opts.InpFile != nil {
 		var err error
-		data["File"], err = input.LoadFile(opts.InpFile, data)
+		data["File"], err = input.LoadFile(*opts.InpFile, data)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 
-	// Get Etcd input
-	if opts.EtcdHost != "" {
-		// Add error handling
-		node := []string{fmt.Sprintf("http://%v:%v", opts.EtcdHost, opts.EtcdPort)}
+	// Get Etcd input.
+	if opts.EtcdHost != nil {
+		// Add error handling.
+		node := []string{fmt.Sprintf("http://%v:%v", *opts.EtcdHost, opts.EtcdPort)}
 		client := etcd.NewClient(node)
 		res, _ := client.Get(opts.EtcdDir, true, true)
 		data["Etcd"] = input.EtcdMap(res.Node)
 	}
 
-	// Get http input
-	if opts.HTTPUrl != "" {
+	// Get http input.
+	if opts.HTTPUrl != nil {
 		var f input.DataFmt
 		switch opts.HTTPFormat {
 		case "YAML":
@@ -160,22 +160,36 @@ func main() {
 		}
 
 		var err error
-		data["HTTP"], err = input.GetHTTP(opts.HTTPUrl, opts.HTTPHeader, f)
+		data["HTTP"], err = input.GetHTTP(*opts.HTTPUrl, opts.HTTPHeader, f)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 
-	// Get MySQL input
-	if opts.MySQLHost != "" {
+	// Get MySQL input.
+	if opts.MySQLHost != nil {
 		var err error
-		data["MySQL"], err = input.GetMySQL(opts.MySQLUser, opts.MySQLPassword, opts.MySQLHost, opts.MySQLPort, opts.MySQLDatabase, opts.MySQLQuery)
+
+		if opts.MySQLUser == nil {
+			log.Fatal("For input \"--mysql-host\" you need to specify \"--mysql-user\"")
+		}
+		if opts.MySQLPassword == nil {
+			log.Fatal("For input \"--mysql-host\" you need to specify \"--mysql-password\"")
+		}
+		if opts.MySQLDatabase == nil {
+			log.Fatal("For input \"--mysql-host\" you need to specify \"--mysql-database\"")
+		}
+		if opts.MySQLQuery == nil {
+			log.Fatal("For input \"--mysql-host\" you need to specify \"--mysql-query\"")
+		}
+
+		data["MySQL"], err = input.GetMySQL(*opts.MySQLUser, *opts.MySQLPassword, *opts.MySQLHost, opts.MySQLPort, *opts.MySQLDatabase, *opts.MySQLQuery)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 	}
 
-	// Load config file
+	// Load config file.
 	if opts.Config != "" {
 		cfg, err := input.LoadFile(opts.Config, data)
 		data["Cfg"] = cfg
@@ -217,7 +231,7 @@ func main() {
 					log.Fatal(err.Error())
 				}
 			case "etcd":
-				// Add error handling
+				// Add error handling.
 				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdHost, i.EtcdPort)}
 				client := etcd.NewClient(node)
 				res, _ := client.Get(*i.EtcdDir, true, true)
@@ -284,25 +298,25 @@ func main() {
 		}
 	}
 
-	// If verbose print data structure as YAML
+	// If verbose print data structure as YAML.
 	if opts.Verbose {
 		s, _ := yaml.Marshal(&data)
 		log.Printf("Input data\n%s", string(s))
 	}
 
-	// Template input
+	// Template input.
 	var templ string
 	if (fi.Mode() & os.ModeCharDevice) == 0 {
 		bytes, _ := ioutil.ReadAll(os.Stdin)
 		templ = string(bytes)
-	} else if opts.TemplFile != "" {
-		if _, err := os.Stat(opts.TemplFile); os.IsNotExist(err) {
+	} else if opts.TemplFile != nil {
+		if _, err := os.Stat(*opts.TemplFile); os.IsNotExist(err) {
 			log.Printf("File doesn't exist: %v\n", opts.TemplFile)
 			os.Exit(1)
 		}
 
-		// Open file
-		c, err := ioutil.ReadFile(opts.TemplFile)
+		// Open file.
+		c, err := ioutil.ReadFile(*opts.TemplFile)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -318,32 +332,22 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	/*
-	   txttempl.Must(txttempl.New("template").Funcs(fns).Parse(templ))
-
-	   	buf := new(bytes.Buffer)
-	   	err := t.Execute(buf, data)
-	   	if err != nil {
-	   		log.Fatal(err.Error())
-	   	}
-	*/
-
 	// Write result
-	if opts.OutpFile != "" {
+	if opts.OutpFile != nil {
 		p, err := strconv.ParseUint(opts.Permission, 8, 32)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
-		w, err := os.Create(opts.OutpFile)
+		w, err := os.Create(*opts.OutpFile)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
 		w.Chmod(os.FileMode(p))
 
-		if opts.Owner != "" {
-			u, err := user.Lookup(opts.Owner)
+		if opts.Owner != nil {
+			u, err := user.Lookup(*opts.Owner)
 			if err != nil {
 				log.Fatal(err.Error())
 			}
