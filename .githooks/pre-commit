@@ -4,8 +4,8 @@
 readonly RED='\033[31m'
 readonly GREEN='\033[32m'
 readonly YELLOW='\033[33m'
-readonly CLEAR='\033[0m'
 readonly GREY='\033[37m'
+readonly CLEAR='\033[0m'
 
 error()
 {
@@ -23,16 +23,16 @@ for file in $files; do
     if [ -f $file ]; then
         echo -e "${GREY}+ ${GREEN}Cleanup syntax gofmt: ${file}${RED}"
         gofmt ${file} >${file}.fmt || exit_code=1
-		mv ${file}.fmt ${file}
+        mv ${file}.fmt ${file}
         echo -en ${CLEAR}
     fi
 done
 
 echo -e "${GREY}+ ${GREEN}Verify syntax using golint: ${file}${RED}"
-golint ${file} || exit 1
+golint || exit 1
 
 echo -e "${GREY}+ ${GREEN}Verify syntax using go vet: ${file}${RED}"
-go vet ${file} || exit 1
+go vet || exit 1
 
 echo -e "${GREY}+ ${GREEN}Build project to check for error(s)${RED}"
 go build || exit_code=1
