@@ -73,8 +73,12 @@ func arrStrToIntf(inp []string) []interface{} {
 }
 
 // Last element in array.
-func Last(i int, inp interface{}) bool {
-	return i == reflect.ValueOf(inp).Len()-1
+func Last(i int, inp interface{}) (bool, error) {
+	if reflect.ValueOf(inp).Kind() != reflect.Slice && reflect.ValueOf(inp).Kind() != reflect.Array {
+		return false, fmt.Errorf("Incorrect type: %s, needs to be: slice or array", reflect.ValueOf(inp).Kind())
+	}
+
+	return i == reflect.ValueOf(inp).Len()-1, nil
 }
 
 // Join elements in an array to a string.
