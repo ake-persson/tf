@@ -11,8 +11,7 @@ mkdir -p ${SRCDIR}
 cp -r input template vendor ${SRCDIR}
 cp *.go ${SRCDIR}
 (
-    echo ${GOPATH}
+    find ${SRCDIR}
     cd ${SRCDIR}
-#    go get .
     go install .
 )
