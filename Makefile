@@ -6,6 +6,4 @@ clean:
 build: clean
 	gb build all
 
-install: build
-
 update:

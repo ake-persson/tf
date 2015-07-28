@@ -2,16 +2,5 @@
 
 set -eux
 
-export GOPATH="$(pwd)/.gobuild"
-SRCDIR="${GOPATH}/src/github.com/mickep76/tf"
-
-[ -d ${GOPATH} ] && rm -rf ${GOPATH}
-mkdir -p ${GOPATH}/{src,pkg,bin}
-mkdir -p ${SRCDIR}
-cp -r input template vendor ${SRCDIR}
-cp *.go ${SRCDIR}
-(
-    find ${SRCDIR}
-    cd ${SRCDIR}
-    go install .
-)
+go get github.com/constabulary/gb/...
+${GOPATH}/bin/gb build all
