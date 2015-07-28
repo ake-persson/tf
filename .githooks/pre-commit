@@ -43,7 +43,10 @@ echo -e "${GREY}+ ${GREEN}Verify syntax using go vet: ${file}${RED}"
 cd src/github.com/mickep76/tf
 go vet || clear_exit 1
 
-echo -e "${GREY}+ ${GREEN}Build project to check for error(s)${CLEAR}"
+echo -e "${GREY}+ ${GREEN}Run test(s) for project:${CLEAR}"
+gb test || exit_code=1
+
+echo -e "${GREY}+ ${GREEN}Build project to check for error(s):${CLEAR}"
 gb build || exit_code=1
 
 clear_exit $exit_code
