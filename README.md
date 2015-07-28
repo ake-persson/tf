@@ -15,7 +15,7 @@ Application Options:
   -i, --input=          Input, defaults to using YAML
   -F, --input-format=   Data serialization format YAML, TOML or JSON (YAML)
   -f, --input-file=     Input file, data serialization format used is based on the file extension
-  -t, --template-file=  Template file
+  -t, --template=       Template file
   -o, --output-file=    Output file (STDOUT)
   -p, --permission=     File permissions in octal (644)
   -O, --owner=          File Owner
@@ -122,40 +122,6 @@ tf --etcd-host ${IP} --etcd-port 4001 --etcd-dir /hosts
 tf --config examples/etcd/tf.toml --template examples/etcd/hosts.tf --input "{ EtcdHost: ${IP} }"
 ```
 
-## Example
-
-**tf.toml**
-```
-[defaults]
-mysql_user = "test"
-mysql_password = "test"
-mysql_host = "mysql.example.com"
-mysql_database = "test"
-etcd_host = "etcd1.example.com"
-
-[inputs.MySQLHost]
-mysql_query = "SELECT host, location FROM hosts WHERE host LIKE '{{ .Arg.host }}'"
-
-[inputs.EtcdHost]
-etcd_dir = "/hosts/{{ .host }}"
-
-[inputs.EtcdRegion]
-etcd_dir = "'/regions/{{ .region }}"
-```
-
-```
-tf -c tf.toml -i '{ host: myhost.example.com, region: emea }'
-```
-
-# Examples
-
-```bash
-tf -f examples/example.yaml -t examples/example.conf.tf -o example.conf
-tf -i '{region: amer, country: us}' -t examples/example.conf.tf
-tf -i '{Apples: [1,2,3]}' -t examples/apples.tf
-echo '{{keys .Etcd | join "\n"}}' | tf --etcd-node etcd1 --etcd-port 5001 --etcd-key /host
-```
-
 You can find a more complete example in "examples/docker" for templating Dockerfile and configuration files, this was
 primary use-case for this project. However it's pretty generic and could be used for any templating in Bash.
 
@@ -175,7 +141,7 @@ odd      | $x                  | int                | Test if $x is odd
 
 ```bash
 echo '{{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
-echo '{{range $k, $e := .Oranges}}{{if ismap $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
+echo '{{range $k, $e := .Oranges}}{{if map $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
 echo '{{1 | even }} | tf
 ```
 
@@ -214,7 +180,7 @@ echo '{{keys .Env | join "\n"}}' | tf
 echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf
 echo '{{ "Doo Doo" | replace "Doo" "Doo is extinct" }}' | tf
 echo '{{ "!!! TRIM !!!" | trim "! " }}' | tf
-echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | ./tf 
+echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | tf 
 ```
 
 # Build
