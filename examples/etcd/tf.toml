@@ -1,0 +1,7 @@
+[defaults]
+etcd_host = "{{ .EtcdHost }}"
+etcd_port = 4001
+
+[inputs.Hosts]
+type = "etcd"
+etcd_dir = "/hosts"
