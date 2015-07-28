@@ -22,6 +22,7 @@ clear_exit()
 which golint &>/dev/null || error "Failed to locate golint"
 which gofmt &>/dev/null || error "Failed to locate gofmt"
 which go &>/dev/null || error "Failed to locate go"
+which gb &>/dev/null || error "Failed to locate gb"
 
 export GOPATH=$(pwd)
 
