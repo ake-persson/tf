@@ -131,7 +131,7 @@ func GetInput(name string, inp map[string]interface{}, d CfgDefault) (CfgInput, 
 		case "path":
 			s := v.(string)
 			i.Path = &s
-		case "etcd_node":
+		case "etcd_host":
 			s := v.(string)
 			i.EtcdHost = &s
 		case "etcd_port":

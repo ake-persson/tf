@@ -58,7 +58,7 @@ func main() {
 		Input         *string `short:"i" long:"input" description:"Input"`
 		InpFormat     string  `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
 		InpFile       *string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
-		TemplFile     *string `short:"t" long:"template-file" description:"Template file"`
+		TemplFile     *string `short:"t" long:"template" description:"Template file"`
 		OutpFile      *string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
 		Permission    string  `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
 		Owner         *string `short:"O" long:"owner" description:"File Owner"`
@@ -233,7 +233,7 @@ func main() {
 					log.Fatal(err.Error())
 				}
 			case "etcd":
-				node := []string{fmt.Sprintf("http://%v:%v", i.EtcdHost, i.EtcdPort)}
+				node := []string{fmt.Sprintf("http://%v:%v", *i.EtcdHost, *i.EtcdPort)}
 				client := etcd.NewClient(node)
 				res, err := client.Get(*i.EtcdDir, true, true)
 				if err != nil {

@@ -1,4 +1,4 @@
 package main
 
 // Version for Template File
-const Version = "1.9"
+const Version = "2.1"

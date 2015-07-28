@@ -100,6 +100,28 @@ mysql | mysql_port | MySQL post to connect to.
 mysql | mysql_database | MySQL database to connect to.
 mysql | mysql_query | MySQL SQL query.
 
+## Example with Etcd
+
+```bash
+IP=localhost
+```
+
+If you're using Boot2Docker or docker-machine:
+
+```bash
+IP=$(echo ${DOCKER_HOST##tcp://} | awk -F: '{ print $1}')
+```
+
+```bash
+docker run -d --name etcd -p 4001:4001 coreos/etcd:v0.4.6
+curl -L http://${IP}:4001/v2/keys/hosts/host1.example.com/serialno -XPUT -d value="abc123"
+curl -L http://${IP}:4001/v2/keys/hosts/host2.example.com/serialno -XPUT -d value="def456"
+curl -L http://${IP}:4001/v2/keys/hosts/host3.example.com/serialno -XPUT -d value="fgh789"
+printf '{{ range $k, $e := .Etcd }}| {{ $k | lalign 20 }} | {{ $e.serialno | lalign 10 }} |\n{{end}}' | \
+tf --etcd-host ${IP} --etcd-port 4001 --etcd-dir /hosts
+tf --config examples/etcd/tf.toml --template examples/etcd/hosts.tf --input "{ EtcdHost: ${IP} }"
+```
+
 ## Example
 
 **tf.toml**

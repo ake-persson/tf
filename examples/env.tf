@@ -1,2 +1,0 @@
-{{.Env.PATH}}
-{{.Env.HOME}}
