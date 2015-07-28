@@ -13,9 +13,17 @@ error()
     exit 1
 }
 
+clear_exit()
+{
+    echo -e ${CLEAR}
+    exit $1
+}
+
 which golint &>/dev/null || error "Failed to locate golint"
 which gofmt &>/dev/null || error "Failed to locate gofmt"
 which go &>/dev/null || error "Failed to locate go"
+
+export GOPATH=$(pwd)
 
 exit_code=0
 files=$( git diff-index --cached HEAD --name-only | grep -E '\.go$' )
@@ -29,13 +37,13 @@ for file in $files; do
 done
 
 echo -e "${GREY}+ ${GREEN}Verify syntax using golint: ${file}${RED}"
-golint || exit 1
+golint src/ || clear_exit 1
 
 echo -e "${GREY}+ ${GREEN}Verify syntax using go vet: ${file}${RED}"
-go vet || exit 1
+cd src/github.com/mickep76/tf
+go vet || clear_exit 1
 
-echo -e "${GREY}+ ${GREEN}Build project to check for error(s)${RED}"
-go build || exit_code=1
-echo -en ${CLEAR}
+echo -e "${GREY}+ ${GREEN}Build project to check for error(s)${CLEAR}"
+gb build || exit_code=1
 
-exit $exit_code
+clear_exit $exit_code
