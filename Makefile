@@ -4,7 +4,7 @@ clean:
 	rm -rf pkg bin
 
 test: clean
-	gb test -v
+	gb test
 
 build: test
 	gb build all
