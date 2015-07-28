@@ -7,3 +7,4 @@ build: clean
 	gb build all
 
 update:
+	gb vendor update --all
