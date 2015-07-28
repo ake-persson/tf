@@ -3,7 +3,7 @@ package input
 import (
 	"strings"
 
-	etcd "github.com/mickep76/tf/vendor/github.com/coreos/go-etcd/etcd"
+	etcd "github.com/coreos/go-etcd/etcd"
 )
 
 // EtcdMap creates a nested data structure from a Etcd node.

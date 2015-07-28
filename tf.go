@@ -8,10 +8,10 @@ import (
 	"reflect"
 	"strconv"
 
-	log "github.com/mickep76/tf/vendor/github.com/Sirupsen/logrus"
-	etcd "github.com/mickep76/tf/vendor/github.com/coreos/go-etcd/etcd"
-	flags "github.com/mickep76/tf/vendor/github.com/jessevdk/go-flags"
-	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
+	log "github.com/mickep76/tf/Godeps/_workspace/src/github.com/Sirupsen/logrus"
+	etcd "github.com/mickep76/tf/Godeps/_workspace/src/github.com/coreos/go-etcd/etcd"
+	flags "github.com/mickep76/tf/Godeps/_workspace/src/github.com/jessevdk/go-flags"
+	"github.com/mickep76/tf/Godeps/_workspace/src/gopkg.in/yaml.v2"
 
 	"github.com/mickep76/tf/input"
 	"github.com/mickep76/tf/template"

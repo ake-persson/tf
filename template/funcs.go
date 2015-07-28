@@ -9,7 +9,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/mickep76/tf/vendor/github.com/jehiah/go-strftime"
+	"github.com/jehiah/go-strftime"
 )
 
 var funcs = template.FuncMap{

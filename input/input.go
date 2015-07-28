@@ -11,10 +11,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/mickep76/tf/vendor/github.com/BurntSushi/toml"
-	log "github.com/mickep76/tf/vendor/github.com/Sirupsen/logrus"
-	_ "github.com/mickep76/tf/vendor/github.com/go-sql-driver/mysql"
-	"github.com/mickep76/tf/vendor/gopkg.in/yaml.v2"
+	"github.com/BurntSushi/toml"
+	log "github.com/Sirupsen/logrus"
+	_ "github.com/go-sql-driver/mysql"
+	"gopkg.in/yaml.v2"
 
 	"github.com/mickep76/tf/template"
 )
