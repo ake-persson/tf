@@ -59,7 +59,7 @@ func main() {
 		InpFormat     string  `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
 		InpFile       *string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
 		TemplFile     *string `short:"t" long:"template" description:"Template file"`
-		OutpFile      *string `short:"o" long:"output-file" description:"Output file (STDOUT)"`
+		OutpFile      *string `short:"o" long:"output" description:"Output file (STDOUT)"`
 		Permission    string  `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
 		Owner         *string `short:"O" long:"owner" description:"File Owner"`
 		EtcdHost      *string `long:"etcd-host" description:"Etcd Host"`

@@ -16,7 +16,7 @@ Application Options:
   -F, --input-format=   Data serialization format YAML, TOML or JSON (YAML)
   -f, --input-file=     Input file, data serialization format used is based on the file extension
   -t, --template=       Template file
-  -o, --output-file=    Output file (STDOUT)
+  -o, --output=         Output file (STDOUT)
   -p, --permission=     File permissions in octal (644)
   -O, --owner=          File Owner
       --etcd-host=      Etcd Host
@@ -59,7 +59,7 @@ http_format | Format used by the http response JSON, YAML or TOML. | JSON
 mysql_user | Default MySQL user. |
 mysql_password | Default MySQL password. |
 mysql_host | Default MySQL host. |
-mysql_port | Default MySql port | 3306
+mysql_port | Default MySQL port | 3306
 mysql_database | MySQL database. |
 
 **Example:**
