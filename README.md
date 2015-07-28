@@ -198,9 +198,10 @@ echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | ./tf
 # Build
 
 ```bash
-go get github.com/mickep76/tf
-go install github.com/mickep76/tf
-$GOPATH/bin/tf
+git clone https://github.com/mickep76/tf.git
+cd tf
+./build
+bin/tf --version
 ```
 
 # Install using Homebrew
