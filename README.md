@@ -1,6 +1,6 @@
 # tf - Template File
 
-Template Dockerfile or any file in Bash using YAML input and GO text template (http://golang.org/pkg/text/template/).
+Template Dockerfile or configuration using GO text template (http://golang.org/pkg/text/template/) in Bash with input from YAML, JSON, TOML, Etcd, REST or MySQL.
 
 # Usage
 
@@ -39,7 +39,7 @@ Help Options:
 Input will have it's own namespace such as Arg, File, Env, Etcd. you can also get this by:
 
 ```bash
-echo '{{keys .}} | tf
+echo '{{ keys . }}' | tf
 ```
 
 Argument input will also be in the root scope for convenience.
