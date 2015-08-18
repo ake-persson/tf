@@ -60,7 +60,7 @@ func main() {
 		InpFormat     string  `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
 		InpFile       *string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
 		TemplFile     *string `short:"t" long:"template" description:"Template file"`
-		TemplLang     string  `short:"l" long:"template-lang" description:"Template language text or pongo2" default:"text"`
+		TemplLang     string  `short:"l" long:"template-lang" description:"Template language text or pongo2" default:"pongo2"`
 		OutpFile      *string `short:"o" long:"output" description:"Output file (STDOUT)"`
 		Permission    string  `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
 		Owner         *string `short:"O" long:"owner" description:"File Owner"`
