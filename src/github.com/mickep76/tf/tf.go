@@ -10,6 +10,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	etcd "github.com/coreos/go-etcd/etcd"
+	"github.com/flosch/pongo2"
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
 
@@ -59,6 +60,7 @@ func main() {
 		InpFormat     string  `short:"F" long:"input-format" description:"Data serialization format YAML, TOML or JSON" default:"YAML"`
 		InpFile       *string `short:"f" long:"input-file" description:"Input file, data serialization format used is based on the file extension"`
 		TemplFile     *string `short:"t" long:"template" description:"Template file"`
+		TemplLang     string  `short:"l" long:"template-lang" description:"Template language text or pongo2" default:"text"`
 		OutpFile      *string `short:"o" long:"output" description:"Output file (STDOUT)"`
 		Permission    string  `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
 		Owner         *string `short:"O" long:"owner" description:"File Owner"`
@@ -330,10 +332,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Parse and compile template.
-	buf, err := template.Compile(templ, data)
-	if err != nil {
-		log.Fatal(err.Error())
+	var outp string
+	if opts.TemplLang == "text" {
+		// Parse and compile template.
+		buf, err := template.Compile(templ, data)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		outp = buf.String()
+	} else {
+		var err error
+		// Compile template
+		tpl, err := pongo2.FromString(templ)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		// Render template.
+		outp, err = tpl.Execute(data) //pongo2.Context{"name": "florian"})
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 
 	// Write result
@@ -372,13 +391,13 @@ func main() {
 			}
 		}
 
-		_, err = w.Write(buf.Bytes())
+		_, err = w.Write(([]byte)(outp))
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
 		w.Close()
 	} else {
-		fmt.Printf("%v\n", buf)
+		fmt.Printf("%v\n", outp)
 	}
 }

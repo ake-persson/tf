@@ -39,6 +39,12 @@
 			"path": "/etcd"
 		},
 		{
+			"importpath": "github.com/flosch/pongo2",
+			"repository": "https://github.com/flosch/pongo2",
+			"revision": "4b88c21b83c2efa040aa17da2b1a91437cbb7494",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/getsentry/raven-go",
 			"repository": "https://github.com/getsentry/raven-go",
 			"revision": "74c334d7b8aaa4fd1b4fc6aa428c36fed1699e28",
