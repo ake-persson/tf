@@ -28,11 +28,11 @@ func cpuInfo() (map[string]string, error) {
 		values := strings.Split(line, ":")
 		if len(values) < 1 {
 			continue
-		} else if _, ok := d["cpu.model"]; !ok && strings.HasPrefix(line, "model name") {
-			d["cpu.model"] = strings.Trim(strings.Join(values[1:], " "), " ")
-		} else if _, ok := d["cpu.flags"]; !ok && strings.HasPrefix(line, "flags") {
-			d["cpu.flags"] = strings.Trim(strings.Join(values[1:], " "), " ")
-		} else if _, ok := d["cpu cores"]; !ok && strings.HasPrefix(line, "cpu cores") {
+		} else if _, ok := d["cpu_model"]; !ok && strings.HasPrefix(line, "model name") {
+			d["cpu_model"] = strings.Trim(strings.Join(values[1:], " "), " ")
+		} else if _, ok := d["cpu_flags"]; !ok && strings.HasPrefix(line, "flags") {
+			d["cpu_flags"] = strings.Trim(strings.Join(values[1:], " "), " ")
+		} else if _, ok := d["cpu_cores"]; !ok && strings.HasPrefix(line, "cpu cores") {
 			cores, _ = strconv.ParseInt(strings.Trim(strings.Join(values[1:], " "), " "), 10, 0)
 		} else if strings.HasPrefix(line, "processor") {
 			logical++
@@ -41,14 +41,14 @@ func cpuInfo() (map[string]string, error) {
 			cpu_ids[cpu_id] = cpu_ids[cpu_id] + 1
 		}
 	}
-	d["cpu.logical"] = strconv.FormatInt(logical, 10)
+	d["cpu_logical"] = strconv.FormatInt(logical, 10)
 	sockets := int64(len(cpu_ids))
-	d["cpu.sockets"] = strconv.FormatInt(sockets, 10)
-	d["cpu.cores_per_socket"] = strconv.FormatInt(cores, 10)
+	d["cpu_sockets"] = strconv.FormatInt(sockets, 10)
+	d["cpu_cores_per_socket"] = strconv.FormatInt(cores, 10)
 	physical := int64(len(cpu_ids)) * cores
-	d["cpu.physical"] = strconv.FormatInt(physical, 10)
+	d["cpu_physical"] = strconv.FormatInt(physical, 10)
 	t := logical / sockets / cores
-	d["cpu.threads_per_core"] = strconv.FormatInt(t, 10)
+	d["cpu_threads_per_core"] = strconv.FormatInt(t, 10)
 
 	return d, nil
 }
@@ -132,37 +132,37 @@ func HWInfo() (map[string]string, error) {
 		"manufacturer":    "/sys/devices/virtual/dmi/id/chassis_vendor",
 		"product_version": "/sys/devices/virtual/dmi/id/product_version",
 		"product":         "/sys/devices/virtual/dmi/id/product_name",
-		"bios.date":       "/sys/devices/virtual/dmi/id/bios_date",
-		"bios.vendor":     "/sys/devices/virtual/dmi/id/bios_vendor",
-		"bios.version":    "/sys/devices/virtual/dmi/id/bios_version",
+		"bios_date":       "/sys/devices/virtual/dmi/id/bios_date",
+		"bios_vendor":     "/sys/devices/virtual/dmi/id/bios_vendor",
+		"bios_version":    "/sys/devices/virtual/dmi/id/bios_version",
 	}
 
 	sysctl_fields := map[string]string{
-		"mem.total.b":          "hw.memsize",
-		"cpu.cores_per_socket": "machdep.cpu.core_count",
-		"cpu.physical":         "hw.physicalcpu_max",
-		"cpu.logical":          "hw.logicalcpu_max",
-		"cpu.model":            "machdep.cpu.brand_string",
-		"cpu.flags":            "machdep.cpu.features",
+		"mem_total_b":          "hw.memsize",
+		"cpu_cores_per_socket": "machdep.cpu.core_count",
+		"cpu_physical":         "hw.physicalcpu_max",
+		"cpu_logical":          "hw.logicalcpu_max",
+		"cpu_model":            "machdep.cpu.brand_string",
+		"cpu_flags":            "machdep.cpu.features",
 	}
 
 	sw_vers_fields := map[string]string{
-		"os.name":    "ProductName",
-		"os.version": "ProductVersion",
+		"os_name":    "ProductName",
+		"os_version": "ProductVersion",
 	}
 
 	lsb_release_fields := map[string]string{
-		"os.name":    "Distributor ID",
-		"os.version": "Release",
+		"os_name":    "Distributor ID",
+		"os_version": "Release",
 	}
 
 	meminfo_fields := map[string]string{
-		"mem.total.kb": "MemTotal",
+		"mem_total_kb": "MemTotal",
 	}
 
 	sys := make(map[string]string)
 
-	sys["os.kernel"] = runtime.GOOS
+	sys["os_kernel"] = runtime.GOOS
 
 	h, err := os.Hostname()
 	if err != nil {
@@ -186,27 +186,27 @@ func HWInfo() (map[string]string, error) {
 
 		merge(sys, o)
 
-		b, err := strconv.ParseUint(sys["mem.total.b"], 10, 64)
+		b, err := strconv.ParseUint(sys["mem_total_b"], 10, 64)
 		if err != nil {
 			return map[string]string{}, err
 		} else {
 			kb := b / 1024
 			mb := kb / 1024
 			gb := mb / 1024
-			sys["mem.total.kb"] = strconv.FormatUint(kb, 10)
-			sys["mem.total.mb"] = strconv.FormatUint(mb, 10)
-			sys["mem.total.gb"] = strconv.FormatUint(gb, 10)
+			sys["mem_total_kb"] = strconv.FormatUint(kb, 10)
+			sys["mem_total_mb"] = strconv.FormatUint(mb, 10)
+			sys["mem_total_gb"] = strconv.FormatUint(gb, 10)
 		}
 
-		c, _ := strconv.ParseUint(sys["cpu.cores_per_socket"], 10, 64)
-		p, _ := strconv.ParseUint(sys["cpu.physical"], 10, 64)
-		l, _ := strconv.ParseUint(sys["cpu.logical"], 10, 64)
+		c, _ := strconv.ParseUint(sys["cpu_cores_per_socket"], 10, 64)
+		p, _ := strconv.ParseUint(sys["cpu_physical"], 10, 64)
+		l, _ := strconv.ParseUint(sys["cpu_logical"], 10, 64)
 		s := p / c
-		sys["cpu.sockets"] = strconv.FormatUint(s, 10)
+		sys["cpu_sockets"] = strconv.FormatUint(s, 10)
 		t := l / s / c
-		sys["cpu.threads_per_core"] = strconv.FormatUint(t, 10)
+		sys["cpu_threads_per_core"] = strconv.FormatUint(t, 10)
 
-		sys["cpu.flags"] = strings.ToLower(sys["cpu.flags"])
+		sys["cpu_flags"] = strings.ToLower(sys["cpu_flags"])
 
 		o2, err2 := execCmd("/usr/bin/sw_vers", []string{}, ":", sw_vers_fields)
 		if err2 != nil {
@@ -244,18 +244,18 @@ func HWInfo() (map[string]string, error) {
 		}
 		merge(sys, o4)
 
-		sys["mem.total.kb"] = strings.Trim(sys["mem.total.kb"], " kB")
+		sys["mem_total_kb"] = strings.Trim(sys["mem_total_kb"], " kB")
 
-		kb, err := strconv.ParseUint(sys["mem.total.kb"], 10, 64)
+		kb, err := strconv.ParseUint(sys["mem_total_kb"], 10, 64)
 		if err != nil {
 			return map[string]string{}, err
 		} else {
 			b := kb * 1024
 			mb := kb / 1024
 			gb := mb / 1024
-			sys["mem.total.b"] = strconv.FormatUint(b, 10)
-			sys["mem.total.mb"] = strconv.FormatUint(mb, 10)
-			sys["mem.total.gb"] = strconv.FormatUint(gb, 10)
+			sys["mem_total_b"] = strconv.FormatUint(b, 10)
+			sys["mem_total_mb"] = strconv.FormatUint(mb, 10)
+			sys["mem_total_gb"] = strconv.FormatUint(gb, 10)
 		}
 
 	default:
