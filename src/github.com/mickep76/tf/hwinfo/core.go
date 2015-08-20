@@ -111,7 +111,7 @@ func execCmd(cmd string, args []string, del string, fields map[string]string) (m
 		}
 
 		for k, v := range fields {
-			if strings.HasPrefix(line, v) {
+			if strings.HasPrefix(strings.Trim(line, " "), v) {
 				d[k] = strings.Trim(strings.Join(values[1:], " "), " \t")
 			}
 		}
@@ -159,6 +159,14 @@ func HWInfo() (map[string]string, error) {
 
 	meminfo_fields := map[string]string{
 		"mem_total_kb": "MemTotal",
+	}
+
+	system_profiler_fields := map[string]string{
+		"model_name":        "Model Name",
+		"model_id":          "Model Identifier",
+		"boot_room_version": "Boot ROM Version",
+		"smc_version":       "SMC Version",
+		"serial_number":     "Serial Number",
 	}
 
 	sys := make(map[string]string)
@@ -213,8 +221,13 @@ func HWInfo() (map[string]string, error) {
 		if err2 != nil {
 			return map[string]string{}, err2
 		}
-
 		merge(sys, o2)
+
+		o3, err3 := execCmd("/usr/sbin/system_profiler", []string{"SPHardwareDataType"}, ":", system_profiler_fields)
+		if err3 != nil {
+			return map[string]string{}, err3
+		}
+		merge(sys, o3)
 
 	case "linux":
 		o, err := loadFiles(sys_files)
