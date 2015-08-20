@@ -65,6 +65,7 @@ func main() {
 		OutpFile      *string `short:"o" long:"output" description:"Output file (STDOUT)"`
 		Permission    string  `short:"p" long:"permission" description:"File permissions in octal" default:"644"`
 		Owner         *string `short:"O" long:"owner" description:"File Owner"`
+		HWInfo        bool    `short:"H" long:"hwinfo" description:"Include hardware info as input"`
 		EtcdHost      *string `long:"etcd-host" description:"Etcd Host"`
 		EtcdPort      int     `long:"etcd-port" description:"Etcd Port" default:"2379"`
 		EtcdDir       string  `long:"etcd-dir" description:"Etcd Dir" default:"/"`
@@ -105,10 +106,12 @@ func main() {
 	data["Env"] = input.GetOSEnv()
 
 	// Get hwinfo.
-	var err error
-	data["HWInfo"], err = hwinfo.HWInfo()
-	if err != nil {
-		log.Fatal(err.Error())
+	if opts.HWInfo {
+		var err error
+		data["HWInfo"], err = hwinfo.HWInfo()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 
 	// Get argument input.
