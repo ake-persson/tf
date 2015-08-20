@@ -14,6 +14,7 @@ import (
 	flags "github.com/jessevdk/go-flags"
 	"gopkg.in/yaml.v2"
 
+	"github.com/mickep76/tf/hwinfo"
 	"github.com/mickep76/tf/input"
 	"github.com/mickep76/tf/template"
 )
@@ -102,6 +103,13 @@ func main() {
 	// Get environment variables.
 	data := make(map[string]interface{})
 	data["Env"] = input.GetOSEnv()
+
+	// Get hwinfo.
+	var err error
+	data["HWInfo"], err = hwinfo.HWInfo()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	// Get argument input.
 	if opts.Input != nil {
