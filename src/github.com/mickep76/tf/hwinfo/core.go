@@ -128,7 +128,8 @@ func merge(a map[string]string, b map[string]string) {
 
 func HWInfo() (map[string]string, error) {
 	sys_files := map[string]string{
-		"serial_number":   "/sys/devices/virtual/dmi/id/product_serial",
+		// check for perm. to read it
+		//		"serial_number":   "/sys/devices/virtual/dmi/id/product_serial",
 		"manufacturer":    "/sys/devices/virtual/dmi/id/chassis_vendor",
 		"product_version": "/sys/devices/virtual/dmi/id/product_version",
 		"product":         "/sys/devices/virtual/dmi/id/product_name",
