@@ -16,6 +16,7 @@ Application Options:
   -F, --input-format=   Data serialization format YAML, TOML or JSON (YAML)
   -f, --input-file=     Input file, data serialization format used is based on the file extension
   -t, --template=       Template file
+  -l, --template-lang   Template language text or pongo2 (pongo2)
   -o, --output=         Output file (STDOUT)
   -p, --permission=     File permissions in octal (644)
   -O, --owner=          File Owner
@@ -39,7 +40,7 @@ Help Options:
 Input will have it's own namespace such as Arg, File, Env, Etcd. you can also get this by:
 
 ```bash
-echo '{{ keys . }}' | tf
+echo '{{ keys . }}' | tf -l text
 ```
 
 Argument input will also be in the root scope for convenience.
@@ -140,9 +141,9 @@ odd      | $x                  | int                | Test if $x is odd
 ### Examples
 
 ```bash
-echo '{{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -i '{ Apples: [ 1, 2, 3] }'
-echo '{{range $k, $e := .Oranges}}{{if map $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
-echo '{{1 | even }} | tf
+echo '{{range $i, $e := .Apples}}Apple: {{$e}}{{if last $i $.Apples | not}}{{printf ",\n"}}{{end}}{{end}}' | tf -l text -i '{ Apples: [ 1, 2, 3] }'
+echo '{{range $k, $e := .Oranges}}{{if map $e | not }}{{printf "%s: %v\n" $k $e}}{{end}}{{end}}' | tf -l text -i '{ Oranges: { a: 1, b: 2, c: { a: 1, b: 2 } } }'
+echo '{{1 | even }} | tf -l text
 ```
 
 ## Functions
@@ -174,13 +175,13 @@ date       | $fmt               | ...interface{}              | Print date/time,
 ### Examples
 
 ```bash
-echo '{{split ":" .Env.PATH | join ",\n"}}' | tf
-echo '{{repeat 20 "-"}} HELLO WORLD! {{"-" | repeat 20}}' | tf
-echo '{{keys .Env | join "\n"}}' | tf
-echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf
-echo '{{ "Doo Doo" | replace "Doo" "Doo is extinct" }}' | tf
-echo '{{ "!!! TRIM !!!" | trim "! " }}' | tf
-echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | tf 
+echo '{{split ":" .Env.PATH | join ",\n"}}' | tf -l text
+echo '{{repeat 20 "-"}} HELLO WORLD! {{"-" | repeat 20}}' | tf -l text
+echo '{{keys .Env | join "\n"}}' | tf -l text
+echo '{{ "UPPER" | lower}} {{ "lower" | upper }}' | tf -l text
+echo '{{ "Doo Doo" | replace "Doo" "Doo is extinct" }}' | tf -l text
+echo '{{ "!!! TRIM !!!" | trim "! " }}' | tf -l text
+echo '{{ 2 | add 2 | sub 2 | mul 5 | div 5}}' | tf -l text
 ```
 
 # Build
